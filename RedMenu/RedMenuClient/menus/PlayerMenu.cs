@@ -727,19 +727,15 @@ MenuController.AddMenu(scaleMenu);
 if (Function.Call<bool>((Hash)0x1820E469, PlayerPedId(), 1))
 {
     float scale = Function.Call<float>((Hash)0x4707E9C23D8CA3FE);
-    MenuController.AddSubmenu(playerMenu, scaleMenu);
-    MenuItem scaleBtn = new MenuItem("Player Scale", "Change the size of your player model.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    playerMenu.AddMenuItem(scaleBtn);
-    MenuController.BindMenuItem(playerMenu, scaleMenu, scaleBtn);
 
     MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change the size of your player model.", 0, 20, (int)(scale * 10), true)
     {
         SliderLeftIcon = MenuItem.Icon.ARROW_LEFT,
         SliderRightIcon = MenuItem.Icon.ARROW_RIGHT
     };
-    scaleMenu.AddMenuItem(scaleSlider);
+    playerMenu.AddMenuItem(scaleSlider);
 
-    scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
+    playerMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
     {
         if (item == scaleSlider)
         {
@@ -748,6 +744,7 @@ if (Function.Call<bool>((Hash)0x1820E469, PlayerPedId(), 1))
         }
     };
 }
+
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
                 menu.AddMenuItem(cleanPed);
