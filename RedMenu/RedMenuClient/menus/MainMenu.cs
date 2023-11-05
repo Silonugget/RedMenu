@@ -25,24 +25,6 @@ namespace RedMenuClient.menus
 
             MenuController.AddMenu(mainMenu);
 
-            // Revive Button
-            if (PermissionsManager.IsAllowed(Permission.OPMMenu)) // Adjust the permission as needed
-            {
-                MenuItem reviveBtn = new MenuItem("Revive", "Revive ya self.");
-                mainMenu.AddMenuItem(reviveBtn);
-
-                // Event handler for button press
-                mainMenu.OnItemSelect += (sender, item, index) =>
-                {
-                    if (item == reviveBtn)
-                    {
-                        ExecuteCommand("revive");
-                    }
-                };
-            }
-
-
-
             // Player Menu
             if (PermissionsManager.IsAllowed(Permission.PMMenu))
             {
@@ -135,17 +117,6 @@ if (PermissionsManager.IsAllowed(Permission.VOMenu)) // Adjust the permission as
         }
     };
 }
-
-
-            // Misc settings
-            MenuController.AddSubmenu(mainMenu, MiscSettingsMenu.GetMenu());
-            MenuItem miscBtn = new MenuItem("Misc Settings", "Miscellaneous settings and menu options.")
-            {
-                RightIcon = MenuItem.Icon.ARROW_RIGHT
-            };
-
-            mainMenu.AddMenuItem(miscBtn);
-            MenuController.BindMenuItem(mainMenu, MiscSettingsMenu.GetMenu(), miscBtn);
 
 
             // Server Info
