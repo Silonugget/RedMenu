@@ -26,8 +26,7 @@ namespace RedMenuClient.menus
             MenuController.AddMenu(mainMenu);
 
             // Online Players Menu
-            if (PermissionsManager.IsAllowed(Permission.OPMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, OnlinePlayersMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Online Players", "List of players in the server.")
                 {
@@ -36,11 +35,10 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, OnlinePlayersMenu.GetMenu(), submenuBtn);
-            }
+            
 
             // Player Menu
-            if (PermissionsManager.IsAllowed(Permission.PMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, PlayerMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Player Menu", "All kinds of player related options.")
                 {
@@ -49,11 +47,10 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, PlayerMenu.GetMenu(), submenuBtn);
-            }
+            
 
             // Weapons Menu
-            if (PermissionsManager.IsAllowed(Permission.WMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, WeaponsMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Weapons Menu", "Weapon and ammo related options.")
                 {
@@ -62,10 +59,9 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, WeaponsMenu.GetMenu(), submenuBtn);
-            }
+            
 
-            if (PermissionsManager.IsAllowed(Permission.MMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, MountMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Mount Menu", "Mount related options.")
                 {
@@ -74,10 +70,9 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, MountMenu.GetMenu(), submenuBtn);
-            }
+            
 
-            if (PermissionsManager.IsAllowed(Permission.VMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, VehicleMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Vehicle Menu", "Vehicle related options.")
                 {
@@ -86,11 +81,10 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, VehicleMenu.GetMenu(), submenuBtn);
-            }
+            
 
             // Teleport Menu
-            if (PermissionsManager.IsAllowed(Permission.TMMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, TeleportMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Teleport Menu", "Teleport options.")
                 {
@@ -99,11 +93,10 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, TeleportMenu.GetMenu(), submenuBtn);
-            }
+            
 
             // World Options Menu
-            if (PermissionsManager.IsAllowed(Permission.WOMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, WorldMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("World Menu", "World related options.")
                 {
@@ -112,11 +105,9 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, WorldMenu.GetMenu(), submenuBtn);
-            }
+            
 
-            // Voice Menu
-            if (PermissionsManager.IsAllowed(Permission.VOMenu))
-            {
+
                 MenuController.AddSubmenu(mainMenu, VoiceMenu.GetMenu());
                 MenuItem submenuBtn = new MenuItem("Voice Menu", "Voice related options.")
                 {
@@ -125,7 +116,7 @@ namespace RedMenuClient.menus
 
                 mainMenu.AddMenuItem(submenuBtn);
                 MenuController.BindMenuItem(mainMenu, VoiceMenu.GetMenu(), submenuBtn);
-            }
+            
 
             // Misc settings
             MenuController.AddSubmenu(mainMenu, MiscSettingsMenu.GetMenu());
