@@ -72,12 +72,7 @@ namespace RedMenuClient.data
 
         public static List<string> CoachHashes = new List<string>()
         {
-            "COACH2",
-            "COACH3",
-            "coach3_cutscene",
-            "coach4",
-            "coach5",
-            "coach6",
+
             "STAGECOACH001X",
             "STAGECOACH002X",
             "STAGECOACH003X",
