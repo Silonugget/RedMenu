@@ -75,8 +75,7 @@ namespace RedMenuClient.data
             "WEAPON_PISTOL_M1899",
             "WEAPON_PISTOL_MAUSER",
             //"WEAPON_PISTOL_MAUSER_DRUNK",
-            "WEAPON_PISTOL_SEMIAUTO",
-            "WEAPON_PISTOL_VOLCANIC"
+            "WEAPON_PISTOL_SEMIAUTO"         
         };
         public static List<string> SniperHashes { get; } = new List<string>()
         {
