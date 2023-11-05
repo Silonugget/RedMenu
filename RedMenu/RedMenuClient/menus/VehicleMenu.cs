@@ -169,16 +169,17 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(menu, spawnVehicleMenu);
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-    // Addon Vehicles Submenu
-    Menu addonVehiclesMenu = new Menu("Addon", "Spawn an addon vehicle.");
-    MenuItem addonVehicles = new MenuItem("Addon", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    spawnVehicleMenu.AddMenuItem(addonVehicles);
-    MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-    MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+// Addon Vehicles Submenu
+Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+spawnVehicleMenu.AddMenuItem(addonVehicles);
+MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.IronHorsesHashes, "Iron Horses", "Spawn an iron horse.");
-    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.BoatHashes, "Boats", "Spawn a boat.");
-    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.AirplaneHashes, "Airplanes", "Spawn an airplane.");
+// Assuming you don't have specific lists for iron horses and airplanes, you can use placeholders or create your own lists.
+AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* iron horse hashes */ }, "Iron Horses", "Spawn an iron horse.");
+AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* boat hashes */ }, "Boats", "Spawn a boat.");
+AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* airplane hashes */ }, "Airplanes", "Spawn an airplane.");
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
