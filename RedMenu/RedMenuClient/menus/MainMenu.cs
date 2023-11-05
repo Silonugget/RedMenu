@@ -14,7 +14,7 @@ namespace RedMenuClient.menus
 {
     class MainMenu
     {
-        private static Menu mainMenu = new Menu("RedMenu", "Welcome to RedMenu!");
+        private static Menu mainMenu = new Menu("RedMenu", "Welcome to RH FreeRoam");
         private static bool setupDone = false;
 
         private static void SetupMenu()
@@ -25,18 +25,23 @@ namespace RedMenuClient.menus
 
             MenuController.AddMenu(mainMenu);
 
-            // Online Players Menu
-            if (PermissionsManager.IsAllowed(Permission.OPMMenu))
+            // Revive Button
+            if (PermissionsManager.IsAllowed(Permission.OPMMenu)) // Adjust the permission as needed
             {
-                MenuController.AddSubmenu(mainMenu, OnlinePlayersMenu.GetMenu());
-                MenuItem submenuBtn = new MenuItem("Online Players", "List of players in the server.")
-                {
-                    RightIcon = MenuItem.Icon.ARROW_RIGHT
-                };
+                MenuItem reviveBtn = new MenuItem("Revive", "Revive ya self.");
+                mainMenu.AddMenuItem(reviveBtn);
 
-                mainMenu.AddMenuItem(submenuBtn);
-                MenuController.BindMenuItem(mainMenu, OnlinePlayersMenu.GetMenu(), submenuBtn);
+                // Event handler for button press
+                mainMenu.OnItemSelect += (sender, item, index) =>
+                {
+                    if (item == reviveBtn)
+                    {
+                        ExecuteCommand("revive");
+                    }
+                };
             }
+
+
 
             // Player Menu
             if (PermissionsManager.IsAllowed(Permission.PMMenu))
@@ -114,18 +119,23 @@ namespace RedMenuClient.menus
                 MenuController.BindMenuItem(mainMenu, WorldMenu.GetMenu(), submenuBtn);
             }
 
-            // Voice Menu
-            if (PermissionsManager.IsAllowed(Permission.VOMenu))
-            {
-                MenuController.AddSubmenu(mainMenu, VoiceMenu.GetMenu());
-                MenuItem submenuBtn = new MenuItem("Voice Menu", "Voice related options.")
-                {
-                    RightIcon = MenuItem.Icon.ARROW_RIGHT
-                };
+// Battlepass
+if (PermissionsManager.IsAllowed(Permission.VOMenu)) // Adjust the permission as needed
+{
+    MenuItem battlepassBtn = new MenuItem("Battlepass", "Access the Battlepass.");
+    mainMenu.AddMenuItem(battlepassBtn);
 
-                mainMenu.AddMenuItem(submenuBtn);
-                MenuController.BindMenuItem(mainMenu, VoiceMenu.GetMenu(), submenuBtn);
-            }
+    // Event handler for button press
+    mainMenu.OnItemSelect += (sender, item, index) =>
+    {
+        if (item == battlepassBtn)
+        {
+            ExecuteCommand("battlepass");
+            mainMenu.CloseMenu();
+        }
+    };
+}
+
 
             // Misc settings
             MenuController.AddSubmenu(mainMenu, MiscSettingsMenu.GetMenu());
