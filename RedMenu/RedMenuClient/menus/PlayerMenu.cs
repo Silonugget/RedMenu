@@ -718,6 +718,32 @@ namespace RedMenuClient.menus
             {
                 menu.AddMenuItem(hogtieSelf);
             }
+
+// Scale options
+if (RDR2.Native.Function.Call<bool>(RDR2.Native.Hash._0x1820E469, RDR2.Game.Player.Character.Handle, 1))
+{
+    float scale = RDR2.Native.Function.Call<float>(RDR2.Native.Hash._0x4707E9C23D8CA3FE);
+    MenuController.AddSubmenu(playerMenu, scaleMenu);
+    MenuItem scaleBtn = new MenuItem("Player Scale", "Change the size of your player model.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    playerMenu.AddMenuItem(scaleBtn);
+    MenuController.BindMenuItem(playerMenu, scaleMenu, scaleBtn);
+
+    MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change the size of your player model.", 0, 20, (int)(scale * 10), true)
+    {
+        SliderLeftIcon = MenuItem.Icon.ARROW_LEFT,
+        SliderRightIcon = MenuItem.Icon.ARROW_RIGHT
+    };
+    scaleMenu.AddMenuItem(scaleSlider);
+
+    scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
+    {
+        if (item == scaleSlider)
+        {
+            float newscale = newPos / 10f;
+            RDR2.Native.Function.Call((RDR2.Native.Hash)0x4707E9C23D8CA3FE, RDR2.Game.Player.Character.Handle, newscale);
+        }
+    };
+}
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
                 menu.AddMenuItem(cleanPed);
