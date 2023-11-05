@@ -720,9 +720,9 @@ namespace RedMenuClient.menus
             }
 
 // Scale options
-if (RDR2.Native.Function.Call<bool>(RDR2.Native.Hash._0x1820E469, RDR2.Game.Player.Character.Handle, 1))
+if (Function.Call<bool>(Hash._0x1820E469, Game.Player.Character.Handle, 1))
 {
-    float scale = RDR2.Native.Function.Call<float>(RDR2.Native.Hash._0x4707E9C23D8CA3FE);
+    float scale = Function.Call<float>(Hash._0x4707E9C23D8CA3FE);
     MenuController.AddSubmenu(playerMenu, scaleMenu);
     MenuItem scaleBtn = new MenuItem("Player Scale", "Change the size of your player model.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
     playerMenu.AddMenuItem(scaleBtn);
@@ -735,14 +735,14 @@ if (RDR2.Native.Function.Call<bool>(RDR2.Native.Hash._0x1820E469, RDR2.Game.Play
     };
     scaleMenu.AddMenuItem(scaleSlider);
 
-    scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
+scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
+{
+    if (item == scaleSlider)
     {
-        if (item == scaleSlider)
-        {
-            float newscale = newPos / 10f;
-            RDR2.Native.Function.Call((RDR2.Native.Hash)0x4707E9C23D8CA3FE, RDR2.Game.Player.Character.Handle, newscale);
-        }
-    };
+        float newscale = newPos / 10f;
+        Function.Call((Hash)0x4707E9C23D8CA3FE, Game.Player.Character.Handle, newscale);
+    }
+};
 }
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
