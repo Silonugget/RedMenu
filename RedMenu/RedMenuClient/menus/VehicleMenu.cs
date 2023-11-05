@@ -162,20 +162,39 @@ namespace RedMenuClient.menus
             }), "Select a predefined tint for the vehicle you are currently in.");
 
             if (PermissionsManager.IsAllowed(Permission.VMSpawn))
-            {
-                Menu spawnVehicleMenu = new Menu("Spawn Vehicle", "Spawn a vehicle.");
-                MenuItem spawnVehicle = new MenuItem("Spawn Vehicle", "Spawn a vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-                menu.AddMenuItem(spawnVehicle);
-                MenuController.AddSubmenu(menu, spawnVehicleMenu);
-                MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
+{
+    Menu spawnVehicleMenu = new Menu("Spawn Vehicle", "Spawn a vehicle.");
+    MenuItem spawnVehicle = new MenuItem("Spawn Vehicle", "Spawn a vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    menu.AddMenuItem(spawnVehicle);
+    MenuController.AddSubmenu(menu, spawnVehicleMenu);
+    MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.BuggyHashes, "Buggies", "Spawn a buggy.");
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.BoatHashes, "Boats", "Spawn a boat.");
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.CartHashes, "Carts", "Spawn a cart.");
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.CoachHashes, "Coaches", "Spawn a coach.");
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.WagonHashes, "Wagons", "Spawn a wagon.");
-                AddVehicleSubmenu(spawnVehicleMenu, data.VehicleData.MiscHashes, "Misc", "Spawn a miscellaneous vehicle.");
-            }
+    // Addon Vehicles Submenu
+    Menu addonVehiclesMenu = new Menu("Addon", "Spawn an addon vehicle.");
+    MenuItem addonVehicles = new MenuItem("Addon", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    spawnVehicleMenu.AddMenuItem(addonVehicles);
+    MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+    MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+
+    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.IronHorsesHashes, "Iron Horses", "Spawn an iron horse.");
+    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.BoatHashes, "Boats", "Spawn a boat.");
+    AddVehicleSubmenu(addonVehiclesMenu, data.VehicleData.AirplaneHashes, "Airplanes", "Spawn an airplane.");
+
+    // Regular Vehicles Submenu
+    Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
+    MenuItem regularVehicles = new MenuItem("Regular", "Spawn a regular vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    spawnVehicleMenu.AddMenuItem(regularVehicles);
+    MenuController.AddSubmenu(spawnVehicleMenu, regularVehiclesMenu);
+    MenuController.BindMenuItem(spawnVehicleMenu, regularVehiclesMenu, regularVehicles);
+
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.BuggyHashes, "Buggies", "Spawn a buggy.");
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.BoatHashes, "Boats", "Spawn a boat.");
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.CartHashes, "Carts", "Spawn a cart.");
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.CoachHashes, "Coaches", "Spawn a coach.");
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.WagonHashes, "Wagons", "Spawn a wagon.");
+    AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.MiscHashes, "Misc", "Spawn a miscellaneous vehicle.");
+}
+
 
             if (PermissionsManager.IsAllowed(Permission.VMSelectTint))
             {
