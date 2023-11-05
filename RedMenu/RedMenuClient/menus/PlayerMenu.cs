@@ -719,10 +719,14 @@ namespace RedMenuClient.menus
                 menu.AddMenuItem(hogtieSelf);
             }
 
+// Define scaleMenu
+Menu scaleMenu = new Menu("Scale Menu", "Adjust player scale");
+MenuController.AddMenu(scaleMenu);
+
 // Scale options
-if (Function.Call<bool>(Hash._0x1820E469, Game.Player.Character.Handle, 1))
+if (Function.Call<bool>((Hash)0x1820E469, PlayerPedId(), 1))
 {
-    float scale = Function.Call<float>(Hash._0x4707E9C23D8CA3FE);
+    float scale = Function.Call<float>((Hash)0x4707E9C23D8CA3FE);
     MenuController.AddSubmenu(playerMenu, scaleMenu);
     MenuItem scaleBtn = new MenuItem("Player Scale", "Change the size of your player model.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
     playerMenu.AddMenuItem(scaleBtn);
@@ -735,14 +739,14 @@ if (Function.Call<bool>(Hash._0x1820E469, Game.Player.Character.Handle, 1))
     };
     scaleMenu.AddMenuItem(scaleSlider);
 
-scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
-{
-    if (item == scaleSlider)
+    scaleMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
     {
-        float newscale = newPos / 10f;
-        Function.Call((Hash)0x4707E9C23D8CA3FE, Game.Player.Character.Handle, newscale);
-    }
-};
+        if (item == scaleSlider)
+        {
+            float newscale = newPos / 10f;
+            Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newscale);
+        }
+    };
 }
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
