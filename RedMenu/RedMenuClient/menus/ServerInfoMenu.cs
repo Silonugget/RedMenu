@@ -22,7 +22,7 @@ namespace RedMenuClient.menus
             if (setupDone) return;
             setupDone = true;
 
-            MenuItem item = new MenuItem("Soon.", "This menu is coming soon. Server owners can configure the information displayed here.")
+            MenuItem item = new MenuItem("Silonugget.com", "This menu is coming soon.")
             {
                 Enabled = false,
                 LeftIcon = MenuItem.Icon.LOCK
