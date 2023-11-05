@@ -177,9 +177,9 @@ MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
 // Assuming you don't have specific lists for iron horses and airplanes, you can use placeholders or create your own lists.
-AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* iron horse hashes */ }, "Iron Horses", "Spawn an iron horse.");
-AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* boat hashes */ }, "Boats", "Spawn a boat.");
-AddVehicleSubmenu(addonVehiclesMenu, new List<uint> { /* airplane hashes */ }, "Airplanes", "Spawn an airplane.");
+AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* iron horse hashes as strings */ }, "Iron Horses", "Spawn an iron horse.");
+AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* boat hashes as strings */ }, "Boats", "Spawn a boat.");
+AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* airplane hashes as strings */ }, "Airplanes", "Spawn an airplane.");
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
