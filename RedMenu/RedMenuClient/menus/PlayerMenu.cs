@@ -721,6 +721,7 @@ namespace RedMenuClient.menus
             
 // Create a dynamic list item for player scale
 // Create a slider item for player scale
+// Create a slider item for player scale
 MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change your player scale.", 0.1f, 10f, 1f, true)
 {
     LeftIcon = MenuItem.Icon.ARROW_LEFT,
@@ -740,8 +741,6 @@ menu.OnSliderValueChanged += (sender, item, index, _oldValue, newValue, _itemInd
     }
 };
 
-// Add the dynamic list item to the menu
-menu.AddMenuItem(playerScale);
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
