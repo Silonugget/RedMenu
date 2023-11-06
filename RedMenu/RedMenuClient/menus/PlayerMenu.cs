@@ -719,33 +719,35 @@ namespace RedMenuClient.menus
                 menu.AddMenuItem(hogtieSelf);
             }
             
+// Create a dynamic list item for player scale
 MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
 {
-    if (float.TryParse(item.CurrentItem, out float val))
+    // Try to parse the current item value to a float
+    if (float.TryParse(item.CurrentItem, out float currentScale))
     {
-        float newVal = val;
-        if (left)
-        {
-            newVal -= 0.1f;
-            newVal = Math.Max(newVal, 0.1f); // Ensure the value doesn't go below 0.1
-        }
-        else
-        {
-            newVal += 0.1f;
-            newVal = Math.Min(newVal, 2.0f); // Ensure the value doesn't go above 2.0
-        }
-        // Debug statement to check if the function is being called and what value is being set
-        Console.WriteLine($"Setting player scale to {newVal}");
+        // Adjust the scale based on the direction of input (left or right)
+        float newScale = currentScale + (left ? -0.1f : 0.1f);
+        // Clamp the new scale value to be within the allowed range
+        newScale = Math.Clamp(newScale, 0.1f, 2.0f);
 
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
+        // Debug statement to check the new scale value
+        Console.WriteLine($"Setting player scale to {newScale}");
 
-        item.CurrentItem = newVal.ToString("0.0"); // Update the CurrentItem property
-        return item.CurrentItem; // Return the updated value as a string
+        // Call the function to set the player's scale to the new value
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newScale);
+
+        // Update the CurrentItem property with the new scale value, formatted to one decimal place
+        item.CurrentItem = newScale.ToString("0.0");
+        // Return the updated scale value as a string
+        return item.CurrentItem;
     }
+    // If parsing fails, default to "1.0"
     return "1.0";
 }), "Adjust the scale of your player model.");
 
+// Add the dynamic list item to the menu
 menu.AddMenuItem(playerScale);
+
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
