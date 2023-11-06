@@ -722,36 +722,70 @@ namespace RedMenuClient.menus
 // Create a dynamic list item for player scale
 // Create a slider item for player scale
 // Create a slider item for player scale
-// Create a dynamic list item for player scale
-MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+// Definition of the MenuSliderItem class
+public class MenuSliderItem : MenuItem
 {
-    if (float.TryParse(item.CurrentItem, out float val))
+    public int Min { get; private set; }
+    public int Max { get; private set; }
+    public bool ShowDivider { get; set; }
+    public int Position { get; set; }
+    public Icon SliderLeftIcon { get; set; } = Icon.NONE;
+    public Icon SliderRightIcon { get; set; } = Icon.NONE;
+    public System.Drawing.Color BackgroundColor { get; set; } = System.Drawing.Color.FromArgb(255, 24, 93, 151);
+    public System.Drawing.Color BarColor { get; set; } = System.Drawing.Color.FromArgb(255, 53, 165, 223);
+
+    // Constructors
+    public MenuSliderItem(string name, int min, int max, int startPosition, bool showDivider = false)
+        : base(name, null)
     {
-        float newVal = val;
-        if (left)
-        {
-            newVal -= 0.1f;
-            newVal = Math.Max(newVal, 0.1f); // Ensure the value doesn't go below 0.1
-        }
-        else
-        {
-            newVal += 0.1f;
-            newVal = Math.Min(newVal, 2.0f); // Ensure the value doesn't go above 2.0
-        }
-        // Debug statement to check if the function is being called and what value is being set
-        Console.WriteLine($"Setting player scale to {newVal}");
-
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
-
-        item.CurrentItem = newVal.ToString("0.0"); // Update the CurrentItem property
-        return item.CurrentItem; // Return the updated value as a string
+        Min = min;
+        Max = max;
+        ShowDivider = showDivider;
+        Position = startPosition;
     }
-    return "1.0";
-}), "Adjust the scale of your player model.");
 
-// Add the dynamic list item to the menu
-menu.AddMenuItem(playerScale);
+    // Method to map the slider value
+    private float Map(float val, float in_min, float in_max, float out_min, float out_max)
+    {
+        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
 
+    // Other methods for drawing and handling input are also defined here...
+}
+
+// Icon enum for representing icons, assuming the game's UI framework uses something similar
+public enum Icon
+{
+    NONE,
+    ARROW_LEFT,
+    ARROW_RIGHT
+    // ... other icons
+}
+
+// Usage of the MenuSliderItem class
+// Create a slider item for player scale
+MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", 1, 100, 10, true)
+{
+    SliderLeftIcon = Icon.ARROW_LEFT,
+    SliderRightIcon = Icon.ARROW_RIGHT
+};
+
+// Add the slider item to the menu
+menu.AddMenuItem(scaleSlider);
+
+// Event handler for when the slider value changes
+menu.OnSliderValueChanged += (sender, item, index, oldValue, newValue, itemIndex) =>
+{
+    // Check if the item is the scale slider
+    if (item == scaleSlider)
+    {
+        // Convert the integer newValue to a float scale value
+        float scaleValue = scaleSlider.Map(newValue, 1, 100, 0.1f, 10f);
+
+        // Set the player's scale to the new value
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
+    }
+};
 
 
 
