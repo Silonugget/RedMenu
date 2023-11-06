@@ -718,24 +718,34 @@ namespace RedMenuClient.menus
             {
                 menu.AddMenuItem(hogtieSelf);
             }
-
+            
 MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
 {
     if (float.TryParse(item.CurrentItem, out float val))
     {
-        float newVal = val + (left ? -0.1f : 0.1f);
-        newVal = Clamp(newVal, 0.1f, 2.0f); // Use the custom Clamp method
-
+        float newVal = val;
+        if (left)
+        {
+            newVal -= 0.1f;
+            newVal = Math.Max(newVal, 0.1f); // Ensure the value doesn't go below 0.1
+        }
+        else
+        {
+            newVal += 0.1f;
+            newVal = Math.Min(newVal, 2.0f); // Ensure the value doesn't go above 2.0
+        }
+        // Debug statement to check if the function is being called and what value is being set
         Console.WriteLine($"Setting player scale to {newVal}");
 
         Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
 
-        return newVal.ToString("0.0");
+        item.CurrentItem = newVal.ToString("0.0"); // Update the CurrentItem property
+        return item.CurrentItem; // Return the updated value as a string
     }
     return "1.0";
 }), "Adjust the scale of your player model.");
 
-
+menu.AddMenuItem(playerScale);
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
