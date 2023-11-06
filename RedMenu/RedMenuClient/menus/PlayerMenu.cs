@@ -719,31 +719,37 @@ namespace RedMenuClient.menus
                 menu.AddMenuItem(hogtieSelf);
             }
 
-// Define scaleMenu
-Menu scaleMenu = new Menu("Scale Menu", "Adjust player scale");
-MenuController.AddMenu(scaleMenu);
 
-// Scale options
-if (Function.Call<bool>((Hash)0x1820E469, PlayerPedId(), 1))
+
+MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
 {
-    float scale = Function.Call<float>((Hash)0x4707E9C23D8CA3FE);
-
-    MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change the size of your player model.", 0, 20, (int)(scale * 10), true)
+    if (float.TryParse(item.CurrentItem, out float val))
     {
-        SliderLeftIcon = MenuItem.Icon.ARROW_LEFT,
-        SliderRightIcon = MenuItem.Icon.ARROW_RIGHT
-    };
-    playerMenu.AddMenuItem(scaleSlider);
-
-    playerMenu.OnSliderPositionChange += (sender, item, oldPos, newPos, itemIndex) =>
-    {
-        if (item == scaleSlider)
+        float newVal = val;
+        if (left)
         {
-            float newscale = newPos / 10f;
-            Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newscale);
+            newVal -= 0.1f;
+            if (newVal < 0.1f)
+            {
+                newVal = 0.1f;
+            }
         }
-    };
-}
+        else
+        {
+            newVal += 0.1f;
+            if (newVal > 2.0f)
+            {
+                newVal = 2.0f;
+            }
+        }
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
+        return newVal.ToString("0.0");
+    }
+    return "1.0";
+}), "Adjust the scale of your player model.");
+
+playerMenu.AddMenuItem(playerScale);
+
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
             {
