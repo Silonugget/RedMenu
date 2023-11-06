@@ -780,22 +780,30 @@ namespace RedMenuClient.menus
 // Assuming 'menu' is your instance of 'Menu' and it's already created somewhere in your code.
 // Create a slider item for player scale
     // Create a slider item for player scale
-    MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
-    menu.AddMenuItem(scaleSlider);
+// Create a slider item for player scale
+MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
+menu.AddMenuItem(scaleSlider);
 
-    // Subscribe to the OnValueChanged event of the scaleSlider
-    scaleSlider.OnValueChanged += (slider, value) =>
-    {
-        // Handle the value change here
-        UpdatePlayerScale(value);
-    };
-}
+// Subscribe to the OnValueChanged event of the scaleSlider
+scaleSlider.OnValueChanged += (slider, value) =>
+{
+    // Handle the value change here
+    // For example, call a function to update the player's scale
+    UpdatePlayerScale(value);
+};
 
-// Define the UpdatePlayerScale method
-private static void UpdatePlayerScale(float scaleValue)
+// Define the UpdatePlayerScale method in the PlayerMenu class
+private void UpdatePlayerScale(float scaleValue)
 {
     // Update the player's scale using the new value
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
+}
+
+// Method to map the integer slider value to a float scale value
+// This method should be in the same class where you're handling the slider events
+private float Map(int val, int in_min, int in_max, float out_min, float out_max)
+{
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 
