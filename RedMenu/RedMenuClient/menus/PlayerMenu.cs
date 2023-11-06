@@ -720,37 +720,38 @@ namespace RedMenuClient.menus
             }
 
 
-MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", 
-    new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+{
+    if (float.TryParse(item.CurrentItem, out float val))
     {
-        if (float.TryParse(item.CurrentItem, out float val))
+        float newVal = val;
+        if (left)
         {
-            float newVal = val;
-            if (left)  // If left (down) is pressed
+            newVal -= 0.1f;
+            if (newVal < 0.1f)
             {
-                newVal /= 0.1f;  // Divide by 0.1
-                if (newVal < 0.1f)
-                {
-                    newVal = 0.1f;
-                }
+                newVal = 0.1f;
             }
-            else  // If right (up) is pressed
-            {
-                newVal *= 10f;  // Multiply by 10
-                if (newVal > 2.0f)
-                {
-                    newVal = 2.0f;
-                }
-            }
-            Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
-            return newVal.ToString("0.0");
         }
-        return "1.0";
-    }), 
-    "Adjust the scale of your player model."
-);
+        else
+        {
+            newVal += 0.1f;
+            if (newVal > 2.0f)
+            {
+                newVal = 2.0f;
+            }
+        }
+        // Debug statement to check if the function is being called and what value is being set
+        Console.WriteLine($"Setting player scale to {newVal}");
+
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newVal);
+        return newVal.ToString("0.0");
+    }
+    return "1.0";
+}), "Adjust the scale of your player model.");
 
 menu.AddMenuItem(playerScale);
+
 
 
 
