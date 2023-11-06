@@ -744,12 +744,6 @@ public class MenuSliderItem : MenuItem
         Position = startPosition;
     }
 
-    // Method to map the slider value
-    private float Map(float val, float in_min, float in_max, float out_min, float out_max)
-    {
-        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
-
     // Other methods for drawing and handling input are also defined here...
 }
 
@@ -780,12 +774,19 @@ menu.OnSliderValueChanged += (sender, item, index, oldValue, newValue, itemIndex
     if (item == scaleSlider)
     {
         // Convert the integer newValue to a float scale value
-        float scaleValue = scaleSlider.Map(newValue, 1, 100, 0.1f, 10f);
+        float scaleValue = Map(newValue, 1, 100, 0.1f, 10f);
 
         // Set the player's scale to the new value
         Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
     }
 };
+
+// Method to map the integer slider value to a float scale value
+private float Map(int val, int in_min, int in_max, float out_min, float out_max)
+{
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 
 
 
