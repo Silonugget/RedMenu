@@ -790,12 +790,10 @@ scaleSlider.OnValueChanged += (slider, value) =>
     UpdatePlayerScale(value);
 };
 
-// Define the UpdatePlayerScale method in the PlayerMenu class
-private void UpdatePlayerScale(float scaleValue)
-{
+
     // Update the player's scale using the new value
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
-}
+
 
 
 
