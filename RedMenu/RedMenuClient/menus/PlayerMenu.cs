@@ -779,24 +779,24 @@ namespace RedMenuClient.menus
 // Assuming 'menu' is your instance of 'Menu' that contains the 'MenuSliderItem'
 // Assuming 'menu' is your instance of 'Menu' and it's already created somewhere in your code.
 // Create a slider item for player scale
-MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
-menu.AddMenuItem(scaleSlider);
+    // Create a slider item for player scale
+    MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
+    menu.AddMenuItem(scaleSlider);
 
-// Subscribe to the OnValueChanged event of the scaleSlider
-scaleSlider.OnValueChanged += (slider, value) =>
+    // Subscribe to the OnValueChanged event of the scaleSlider
+    scaleSlider.OnValueChanged += (slider, value) =>
+    {
+        // Handle the value change here
+        UpdatePlayerScale(value);
+    };
+}
+
+// Define the UpdatePlayerScale method
+private static void UpdatePlayerScale(float scaleValue)
 {
-    // Handle the value change here
-    // For example, call a function to update the player's scale
-    UpdatePlayerScale(value);
-};
-
-
     // Update the player's scale using the new value
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
-
-
-
-
+}
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
