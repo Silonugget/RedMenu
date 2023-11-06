@@ -720,30 +720,25 @@ namespace RedMenuClient.menus
             }
             
 // Create a dynamic list item for player scale
-MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+// Create a slider item for player scale
+MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change your player scale.", 0.1f, 10f, 1f, true)
 {
-    // Try to parse the current item value to a float
-    if (float.TryParse(item.CurrentItem, out float currentScale))
+    LeftIcon = MenuItem.Icon.ARROW_LEFT,
+    RightIcon = MenuItem.Icon.ARROW_RIGHT
+};
+// Add the slider item to the menu
+menu.AddMenuItem(scaleSlider);
+
+// Event handler for when the slider value changes
+menu.OnSliderValueChanged += (sender, item, index, _oldValue, newValue, _itemIndex) =>
+{
+    // Check if the item is the scale slider
+    if (item == scaleSlider)
     {
-        // Adjust the scale based on the direction of input (left or right)
-        float newScale = currentScale + (left ? -0.1f : 0.1f);
-        // Clamp the new scale value to be within the allowed range
-        newScale = Math.Clamp(newScale, 0.1f, 2.0f);
-
-        // Debug statement to check the new scale value
-        Console.WriteLine($"Setting player scale to {newScale}");
-
-        // Call the function to set the player's scale to the new value
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newScale);
-
-        // Update the CurrentItem property with the new scale value, formatted to one decimal place
-        item.CurrentItem = newScale.ToString("0.0");
-        // Return the updated scale value as a string
-        return item.CurrentItem;
+        // Set the player's scale to the new value
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newValue);
     }
-    // If parsing fails, default to "1.0"
-    return "1.0";
-}), "Adjust the scale of your player model.");
+};
 
 // Add the dynamic list item to the menu
 menu.AddMenuItem(playerScale);
