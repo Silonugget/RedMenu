@@ -778,23 +778,9 @@ namespace RedMenuClient.menus
 // Create a slider item for player scale
 // Assuming 'menu' is your instance of 'Menu' that contains the 'MenuSliderItem'
 // Assuming 'menu' is your instance of 'Menu' and it's already created somewhere in your code.
-
 // Create a slider item for player scale
 MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
 menu.AddMenuItem(scaleSlider);
-
-// Subscribe to the SliderItemChangedEvent of the menu
-menu.SliderItemChangedEvent += (Menu menu, MenuSliderItem item, int oldValue, int newValue, int itemIndex) =>
-{
-    // Check if the item is the scale slider
-    if (item == scaleSlider)
-    {
-        // Set the player's scale to the new value
-        // Convert the integer newValue to a float scale value
-        float scaleValue = Map(newValue, 0, 100, 0.1f, 10f); // Adjust the mapping as necessary
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
-    }
-};
 
 // Subscribe to the OnValueChanged event of the scaleSlider
 scaleSlider.OnValueChanged += (slider, value) =>
@@ -805,14 +791,15 @@ scaleSlider.OnValueChanged += (slider, value) =>
 };
 
 // Define the UpdatePlayerScale method in the PlayerMenu class
-private static void UpdatePlayerScale(float scaleValue)
+private void UpdatePlayerScale(float scaleValue)
 {
     // Update the player's scale using the new value
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
 }
 
 // Method to map the integer slider value to a float scale value
-private static float Map(int val, int in_min, int in_max, float out_min, float out_max)
+// This method should be in the same class where you're handling the slider events
+private float Map(int val, int in_min, int in_max, float out_min, float out_max)
 {
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
