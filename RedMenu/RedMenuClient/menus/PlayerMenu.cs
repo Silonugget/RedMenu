@@ -793,7 +793,7 @@ scaleSlider.OnValueChanged += (slider, value) =>
 };
 
 // Define the UpdatePlayerScale method in the PlayerMenu class
-private void UpdatePlayerScale(float scaleValue)
+public void UpdatePlayerScale(float scaleValue)
 {
     // Update the player's scale using the new value
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
@@ -801,7 +801,7 @@ private void UpdatePlayerScale(float scaleValue)
 
 // Method to map the integer slider value to a float scale value
 // This method should be in the same class where you're handling the slider events
-private float Map(int val, int in_min, int in_max, float out_min, float out_max)
+public float Map(int val, int in_min, int in_max, float out_min, float out_max)
 {
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
