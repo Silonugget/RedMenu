@@ -11,7 +11,40 @@ using RedMenuShared;
 using RedMenuClient.util;
 using System.Net;
 using RedMenuClient.data;
+namespace MenuAPI
+{
+    public class MenuSliderItem : MenuItem
+    {
+        public int Min { get; private set; } = 0;
+        public int Max { get; private set; } = 10;
+        public bool ShowDivider { get; set; }
+        public int Position { get; set; } = 0;
+        public Icon SliderLeftIcon { get; set; } = Icon.NONE;
+        public Icon SliderRightIcon { get; set; } = Icon.NONE;
+        public System.Drawing.Color BackgroundColor { get; set; } = System.Drawing.Color.FromArgb(255, 24, 93, 151);
+        public System.Drawing.Color BarColor { get; set; } = System.Drawing.Color.FromArgb(255, 53, 165, 223);
 
+        // Constructors
+        public MenuSliderItem(string name, int min, int max, int startPosition) : this(name, min, max, startPosition, false) { }
+        public MenuSliderItem(string name, int min, int max, int startPosition, bool showDivider) : this(name, null, min, max, startPosition, showDivider) { }
+        public MenuSliderItem(string name, string description, int min, int max, int startPosition) : this(name, description, min, max, startPosition, false) { }
+        public MenuSliderItem(string name, string description, int min, int max, int startPosition, bool showDivider) : base(name, description)
+        {
+            Min = min;
+            Max = max;
+            ShowDivider = showDivider;
+            Position = startPosition;
+        }
+
+        // Method to map the slider value
+        private float Map(float val, float in_min, float in_max, float out_min, float out_max)
+        {
+            return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
+
+        // Other methods for drawing and handling input are also defined here...
+    }
+}
 namespace RedMenuClient.menus
 {
     static class PlayerMenu
@@ -723,71 +756,25 @@ namespace RedMenuClient.menus
 // Create a slider item for player scale
 // Create a slider item for player scale
 // Definition of the MenuSliderItem class
-public class MenuSliderItem : MenuItem
-{
-    public int Min { get; private set; }
-    public int Max { get; private set; }
-    public bool ShowDivider { get; set; }
-    public int Position { get; set; }
-    public Icon SliderLeftIcon { get; set; } = Icon.NONE;
-    public Icon SliderRightIcon { get; set; } = Icon.NONE;
-    public System.Drawing.Color BackgroundColor { get; set; } = System.Drawing.Color.FromArgb(255, 24, 93, 151);
-    public System.Drawing.Color BarColor { get; set; } = System.Drawing.Color.FromArgb(255, 53, 165, 223);
-
-    // Constructors
-    public MenuSliderItem(string name, int min, int max, int startPosition, bool showDivider = false)
-        : base(name, null)
-    {
-        Min = min;
-        Max = max;
-        ShowDivider = showDivider;
-        Position = startPosition;
-    }
-
-    // Other methods for drawing and handling input are also defined here...
-}
-
-// Icon enum for representing icons, assuming the game's UI framework uses something similar
-public enum Icon
-{
-    NONE,
-    ARROW_LEFT,
-    ARROW_RIGHT
-    // ... other icons
-}
-
-// Usage of the MenuSliderItem class
 // Create a slider item for player scale
-MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", 1, 100, 10, true)
+MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change your player scale.", 0.1f, 10f, 1f, true)
 {
-    SliderLeftIcon = Icon.ARROW_LEFT,
-    SliderRightIcon = Icon.ARROW_RIGHT
+    LeftIcon = MenuItem.Icon.ARROW_LEFT,
+    RightIcon = MenuItem.Icon.ARROW_RIGHT
 };
-
 // Add the slider item to the menu
 menu.AddMenuItem(scaleSlider);
 
 // Event handler for when the slider value changes
-menu.OnSliderValueChanged += (sender, item, index, oldValue, newValue, itemIndex) =>
+menu.OnSliderValueChanged += (sender, item, index, _oldValue, newValue, _itemIndex) =>
 {
     // Check if the item is the scale slider
     if (item == scaleSlider)
     {
-        // Convert the integer newValue to a float scale value
-        float scaleValue = Map(newValue, 1, 100, 0.1f, 10f);
-
         // Set the player's scale to the new value
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newValue);
     }
 };
-
-// Method to map the integer slider value to a float scale value
-private float Map(int val, int in_min, int in_max, float out_min, float out_max)
-{
-    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
