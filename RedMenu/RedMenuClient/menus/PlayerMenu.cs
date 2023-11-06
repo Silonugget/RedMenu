@@ -748,7 +748,8 @@ MenuDynamicListItem playerScale = new MenuDynamicListItem("Player Scale", "1.0",
     return "1.0";
 }), "Adjust the scale of your player model.");
 
-playerMenu.AddMenuItem(playerScale);
+menu.AddMenuItem(playerScale);
+
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
