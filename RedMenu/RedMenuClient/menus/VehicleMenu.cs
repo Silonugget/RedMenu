@@ -44,26 +44,42 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+{
+    // Create a new submenu with the provided name and description
+    Menu submenu = new Menu(name, description);
+    // Create a menu item that when selected, will navigate to the submenu
+    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    // Add the menu item to the main menu
+    menu.AddMenuItem(submenuBtn);
+    // Add the submenu to the menu controller and bind it to the submenu button
+    MenuController.AddSubmenu(menu, submenu);
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);
+
+    // Add menu items for each hash in the provided list
+    foreach (var hash in hashes)
+    {
+        MenuItem item = new MenuItem(hash);
+        submenu.AddMenuItem(item);
+    }
+
+    // Define what happens when an item in the submenu is selected
+    submenu.OnItemSelect += async (m, item, index) =>
+    {
+        // Check if the "classic" item was selected to execute the "ironhorse" command
+        if (item.Text.Equals("classic"))
         {
-            Menu submenu = new Menu(name, description);
-            MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-            menu.AddMenuItem(submenuBtn);
-            MenuController.AddSubmenu(menu, submenu);
-            MenuController.BindMenuItem(menu, submenu, submenuBtn);
+            // Execute the 'ironhorse' command
+            ExecuteCommand("ironhorse");
+            return; // Return after command execution to prevent further code execution
+        }
 
-            foreach (var hash in hashes)
-            {
-                submenu.AddMenuItem(new MenuItem(hash));
-            }
-
-            submenu.OnItemSelect += async (m, item, index) =>
-            {
-                if (currentVehicle != 0)
-                {
-                    DeleteVehicle(ref currentVehicle);
-                    currentVehicle = 0;
-                }
+        // Existing code for spawning vehicles
+        if (currentVehicle != 0)
+        {
+            DeleteVehicle(ref currentVehicle);
+            currentVehicle = 0;
+        }
 
                 uint model = (uint)GetHashKey(hashes[index]);
 
@@ -107,6 +123,7 @@ namespace RedMenuClient.menus
                 }
             };
         }
+        
 
         private static int GetNearestVehicle()
         {
@@ -169,18 +186,17 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(menu, spawnVehicleMenu);
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-        // Addon Vehicles Submenu
-        Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-        MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-        spawnVehicleMenu.AddMenuItem(addonVehicles);
-        MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-        MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+       
+                // Addon Vehicles Submenu
+                Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+                MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+                spawnVehicleMenu.AddMenuItem(addonVehicles);
+                MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+                MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-        // Add Vehicle Submenus for different types of vehicles, including Iron Horses with "classic"
-        // You need to define your list of hashes for the iron horses here, including the string "classic"
-        List<string> ironHorseHashes = new List<string> { "hash1", "hash2", "classic" };
-        AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
-
+                // Define list of hashes for the iron horses here, including the string "classic"
+                List<string> ironHorseHashes = new List<string> { /* iron horse hashes as strings */, "classic" };
+                AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
 
 
     // Regular Vehicles Submenu
@@ -407,33 +423,7 @@ namespace RedMenuClient.menus
                 }
             };
         }
-        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
-{
-    Menu submenu = new Menu(name, description);
-    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    menu.AddMenuItem(submenuBtn);
-    MenuController.AddSubmenu(menu, submenu);
-    MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-    // Add menu items for each hash
-    foreach (var hash in hashes)
-    {
-        MenuItem item = new MenuItem(hash);
-        submenu.AddMenuItem(item);
-    }
-
-    submenu.OnItemSelect += async (m, item, index) =>
-    {
-        // Execute the 'ironhorse' command if "classic" is selected
-        if (item.Text.Equals("classic"))
-        {
-            ExecuteCommand("ironhorse");
-            return;
-        }
-
-        // Your existing code for handling other vehicle selections goes here...
-    };
-}
 
         public static Menu GetMenu()
         {
