@@ -781,15 +781,30 @@ namespace RedMenuClient.menus
 // Create a slider item for player scale
     // Create a slider item for player scale
 // Create a slider item for player scale
-            MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
-            menu.AddMenuItem(scaleSlider);
+MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Adjust your player scale.", 0.1f, 10f, 1f, true);
+menu.AddMenuItem(scaleSlider);
 
-            // Subscribe to the OnValueChanged event of the scaleSlider
-            scaleSlider.OnValueChanged += (slider, value) =>
-            {
-                // Handle the value change here
-                UpdatePlayerScale(value);
-            };
+// Subscribe to the OnValueChanged event of the scaleSlider
+scaleSlider.OnValueChanged += (slider, value) =>
+{
+    // Handle the value change here
+    // For example, call a function to update the player's scale
+    UpdatePlayerScale(value);
+};
+
+// Define the UpdatePlayerScale method in the PlayerMenu class
+public void UpdatePlayerScale(float scaleValue)
+{
+    // Update the player's scale using the new value
+    Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
+}
+
+// Method to map the integer slider value to a float scale value
+// This method should be in the same class where you're handling the slider events
+public float Map(int val, int in_min, int in_max, float out_min, float out_max)
+{
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
@@ -2030,16 +2045,6 @@ namespace RedMenuClient.menus
             SetupMenu();
             return menu;
         }
-        private void UpdatePlayerScale(float scaleValue)
-        {
-            // Update the player's scale using the new value
-            Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
-        }
 
-        private float Map(int val, int in_min, int in_max, float out_min, float out_max)
-        {
-            // Map the integer slider value to a float scale value
-            return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-        }
     }
 }
