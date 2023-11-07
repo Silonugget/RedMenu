@@ -67,25 +67,25 @@ private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string nam
 submenu.OnItemSelect += async (m, item, index) =>
 {
     // Check for the "classic" item and execute the "ironhorse" command
-    if (item.Text.Equals("classic"))
+    if (item.Text.Equals("Classic"))
     {
         ExecuteCommand("ironhorse");
         return; // Stop further execution
     }
     // Check for the "offroad" item and execute the "spawn_truck" command
-    else if (item.Text.Equals("offroad"))
+    else if (item.Text.Equals("Offroad"))
     {
         ExecuteCommand("spawn_truck");
         return; // Stop further execution
     }
     // Check for the "emergency" item and execute the "spawn_police2" command
-    else if (item.Text.Equals("emergency"))
+    else if (item.Text.Equals("Emergency"))
     {
         ExecuteCommand("spawn_police2");
         return; // Stop further execution
     }
     // Check for the "sport" item and execute the "g37" command
-    else if (item.Text.Equals("sport"))
+    else if (item.Text.Equals("Sport"))
     {
         ExecuteCommand("g37");
         return; // Stop further execution
