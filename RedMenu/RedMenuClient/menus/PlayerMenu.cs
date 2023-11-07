@@ -720,28 +720,34 @@ namespace RedMenuClient.menus
             }
             
 // Create a dynamic list item for player scale
-// Create a slider item for player scale
-MenuSliderItem scaleSlider = new MenuSliderItem("Player Scale", "Change your player scale.", 0.1f, 10f, 1f, true)
-{
-    LeftIcon = MenuItem.Icon.ARROW_LEFT,
-    RightIcon = MenuItem.Icon.ARROW_RIGHT
-};
-// Add the slider item to the menu
-menu.AddMenuItem(scaleSlider);
+// Button for decreasing player scale
+MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
+menu.AddMenuItem(decreaseScaleButton);
 
-// Event handler for when the slider value changes
-menu.OnSliderValueChanged += (sender, item, index, _oldValue, newValue, _itemIndex) =>
+// Button for increasing player scale
+MenuButtonItem increaseScaleButton = new MenuButtonItem("Increase Scale", "Increase your player scale.");
+menu.AddMenuItem(increaseScaleButton);
+
+// Keep track of the player's scale
+float playerScale = 1f; // Starting scale
+
+// Event handler for when a menu item is selected
+menu.OnItemSelect += (sender, item, index) =>
 {
-    // Check if the item is the scale slider
-    if (item == scaleSlider)
+    // Check if the decrease scale button is selected
+    if (item == decreaseScaleButton)
     {
-        // Set the player's scale to the new value
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), newValue);
+        playerScale = Math.Max(0.1f, playerScale - 0.1f); // Decrease scale, but not below 0.1
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), playerScale);
+    }
+    // Check if the increase scale button is selected
+    else if (item == increaseScaleButton)
+    {
+        playerScale = Math.Min(10f, playerScale + 0.1f); // Increase scale, but not above 10
+        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), playerScale);
     }
 };
 
-// Add the dynamic list item to the menu
-menu.AddMenuItem(playerScale);
 
 
             if (PermissionsManager.IsAllowed(Permission.PMCleanPed))
