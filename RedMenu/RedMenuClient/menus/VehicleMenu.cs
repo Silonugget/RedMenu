@@ -169,17 +169,18 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(menu, spawnVehicleMenu);
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-// Addon Vehicles Submenu
-Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-spawnVehicleMenu.AddMenuItem(addonVehicles);
-MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+        // Addon Vehicles Submenu
+        Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+        MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+        spawnVehicleMenu.AddMenuItem(addonVehicles);
+        MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+        MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-// Assuming you don't have specific lists for iron horses and airplanes, you can use placeholders or create your own lists.
-AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* iron horse hashes as strings */ }, "Iron Horses", "Spawn an iron horse.");
-AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* boat hashes as strings */ }, "Boats", "Spawn a boat.");
-AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* airplane hashes as strings */ }, "Airplanes", "Spawn an airplane.");
+        // Add Vehicle Submenus for different types of vehicles, including Iron Horses with "classic"
+        // You need to define your list of hashes for the iron horses here, including the string "classic"
+        List<string> ironHorseHashes = new List<string> { /* iron horse hashes as strings */, "classic" };
+        AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
+
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
@@ -405,6 +406,33 @@ AddVehicleSubmenu(addonVehiclesMenu, new List<string> { /* airplane hashes as st
                 }
             };
         }
+        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+{
+    Menu submenu = new Menu(name, description);
+    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    menu.AddMenuItem(submenuBtn);
+    MenuController.AddSubmenu(menu, submenu);
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);
+
+    // Add menu items for each hash
+    foreach (var hash in hashes)
+    {
+        MenuItem item = new MenuItem(hash);
+        submenu.AddMenuItem(item);
+    }
+
+    submenu.OnItemSelect += async (m, item, index) =>
+    {
+        // Execute the 'ironhorse' command if "classic" is selected
+        if (item.Text.Equals("classic"))
+        {
+            ExecuteCommand("ironhorse");
+            return;
+        }
+
+        // Your existing code for handling other vehicle selections goes here...
+    };
+}
 
         public static Menu GetMenu()
         {
