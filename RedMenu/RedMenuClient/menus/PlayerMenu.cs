@@ -724,35 +724,30 @@ namespace RedMenuClient.menus
 MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
 menu.AddMenuItem(decreaseScaleButton);
 
-// Check if the player has permission to change the scale
-if (PermissionsManager.IsAllowed(Permission.PMInfiniteStamina))
-{
-    // Button for decreasing player scale
-    MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
-    menu.AddMenuItem(decreaseScaleButton);
+// Assuming 'menu' is already created and is an instance of 'Menu'
 
-    // Button for increasing player scale
-    MenuButtonItem increaseScaleButton = new MenuButtonItem("Increase Scale", "Increase your player scale.");
-    menu.AddMenuItem(increaseScaleButton);
-}
+// Button for decreasing player scale
+MenuItem decreaseScaleButton = new MenuItem("Decrease Scale", "Decrease your player scale.");
+menu.AddMenuItem(decreaseScaleButton);
+
+// Button for increasing player scale
+MenuItem increaseScaleButton = new MenuItem("Increase Scale", "Increase your player scale.");
+menu.AddMenuItem(increaseScaleButton);
 
 // Keep track of the player's scale
 float playerScale = 1f; // Starting scale
 
-// Event handler for when a menu item is selected
-menu.OnItemSelect += (sender, item, index) =>
+menu.OnItemSelect += (menu, item, index) =>
 {
-    // Check if the decrease scale button is selected
     if (item == decreaseScaleButton)
     {
         playerScale = Math.Max(0.1f, playerScale - 0.1f); // Decrease scale, but not below 0.1
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), playerScale);
+        // Call the appropriate native function or method to change the player's scale
     }
-    // Check if the increase scale button is selected
     else if (item == increaseScaleButton)
     {
         playerScale = Math.Min(10f, playerScale + 0.1f); // Increase scale, but not above 10
-        Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), playerScale);
+        // Call the appropriate native function or method to change the player's scale
     }
 };
 
