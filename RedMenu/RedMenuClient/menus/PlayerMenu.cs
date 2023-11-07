@@ -719,12 +719,6 @@ namespace RedMenuClient.menus
                 menu.AddMenuItem(hogtieSelf);
             }
             
-// Create a dynamic list item for player scale
-// Button for decreasing player scale
-MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
-menu.AddMenuItem(decreaseScaleButton);
-
-// Assuming 'menu' is already created and is an instance of 'Menu'
 
 // Button for decreasing player scale
 MenuItem decreaseScaleButton = new MenuItem("Decrease Scale", "Decrease your player scale.");
