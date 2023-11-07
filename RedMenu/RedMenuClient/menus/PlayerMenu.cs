@@ -27,6 +27,7 @@ namespace RedMenuClient.menus
         private static Dictionary<int, uint> currentSpClothes = new Dictionary<int, uint>();
         private static Dictionary<uint, float> currentFacialFeatures = new Dictionary<uint, float>();
         private static Dictionary<int, int> currentBodySettings = new Dictionary<int, int>();
+        private static float playerScale = 1.0f; // Starting scale
 
         private static MenuDynamicListItem playerOutfit;
 
@@ -719,31 +720,30 @@ namespace RedMenuClient.menus
                 menu.AddMenuItem(hogtieSelf);
             }
             
+            // Add button for increasing player scale
+            MenuItem increaseScaleBtn = new MenuItem("Increase Scale", "Increase your player scale.");
+            menu.AddMenuItem(increaseScaleBtn);
 
-// Button for decreasing player scale
-MenuItem decreaseScaleButton = new MenuItem("Decrease Scale", "Decrease your player scale.");
-menu.AddMenuItem(decreaseScaleButton);
+            // Add button for decreasing player scale
+            MenuItem decreaseScaleBtn = new MenuItem("Decrease Scale", "Decrease your player scale.");
+            menu.AddMenuItem(decreaseScaleBtn);
 
-// Button for increasing player scale
-MenuItem increaseScaleButton = new MenuItem("Increase Scale", "Increase your player scale.");
-menu.AddMenuItem(increaseScaleButton);
-
-// Keep track of the player's scale
-float playerScale = 1f; // Starting scale
-
-menu.OnItemSelect += (menu, item, index) =>
-{
-    if (item == decreaseScaleButton)
-    {
-        playerScale = Math.Max(0.1f, playerScale - 0.1f); // Decrease scale, but not below 0.1
-        // Call the appropriate native function or method to change the player's scale
-    }
-    else if (item == increaseScaleButton)
-    {
-        playerScale = Math.Min(10f, playerScale + 0.1f); // Increase scale, but not above 10
-        // Call the appropriate native function or method to change the player's scale
-    }
-};
+            // Event handler for when a menu item is selected
+            menu.OnItemSelect += (sender, item, index) =>
+            {
+                if (item == increaseScaleBtn)
+                {
+                    // Increase player scale logic
+                    playerScale = Math.Min(playerScale + 0.1f, 10.0f);
+                    SetPedScale(PlayerPedId(), playerScale);
+                }
+                else if (item == decreaseScaleBtn)
+                {
+                    // Decrease player scale logic
+                    playerScale = Math.Max(playerScale - 0.1f, 0.1f);
+                    SetPedScale(PlayerPedId(), playerScale);
+                }
+            };
 
 
 
@@ -1978,6 +1978,10 @@ menu.OnItemSelect += (menu, item, index) =>
                     SetMood(item.GetCurrentSelection());
                 }
             };
+        }
+                private static void SetPedScale(int pedId, float scale)
+        {
+            Function.Call((Hash)0x25ACFC650B65C538, pedId, scale);
         }
 
         public static Menu GetMenu()
