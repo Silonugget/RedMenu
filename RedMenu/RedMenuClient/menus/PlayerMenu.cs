@@ -724,9 +724,17 @@ namespace RedMenuClient.menus
 MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
 menu.AddMenuItem(decreaseScaleButton);
 
-// Button for increasing player scale
-MenuButtonItem increaseScaleButton = new MenuButtonItem("Increase Scale", "Increase your player scale.");
-menu.AddMenuItem(increaseScaleButton);
+// Check if the player has permission to change the scale
+if (PermissionsManager.IsAllowed(Permission.PMInfiniteStamina))
+{
+    // Button for decreasing player scale
+    MenuButtonItem decreaseScaleButton = new MenuButtonItem("Decrease Scale", "Decrease your player scale.");
+    menu.AddMenuItem(decreaseScaleButton);
+
+    // Button for increasing player scale
+    MenuButtonItem increaseScaleButton = new MenuButtonItem("Increase Scale", "Increase your player scale.");
+    menu.AddMenuItem(increaseScaleButton);
+}
 
 // Keep track of the player's scale
 float playerScale = 1f; // Starting scale
