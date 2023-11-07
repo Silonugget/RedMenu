@@ -195,7 +195,7 @@ private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string nam
                 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
                 // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { /* iron horse hashes as strings */, "classic" };
+                List<string> ironHorseHashes = new List<string> { "hash1", "hash2", "classic" };
                 AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
 
 
