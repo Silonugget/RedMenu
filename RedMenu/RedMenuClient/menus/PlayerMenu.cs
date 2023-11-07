@@ -797,7 +797,12 @@ private void UpdatePlayerScale(float scaleValue)
     Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), scaleValue);
 }
 
-
+// Method to map the integer slider value to a float scale value
+// This method should be in the same class where you're handling the slider events
+private float Map(int val, int in_min, int in_max, float out_min, float out_max)
+{
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 
 
