@@ -15,14 +15,18 @@ namespace MenuAPI
 {
     public class MenuSliderItem : MenuItem
     {
-        public float Min { get; private set; }
-        public float Max { get; private set; }
+        public int Min { get; private set; } = 0;
+        public int Max { get; private set; } = 10;
         public bool ShowDivider { get; set; }
-        public float Position { get; set; }
+        public int Position { get; set; } = 0;
+        public Icon SliderLeftIcon { get; set; } = Icon.NONE;
+        public Icon SliderRightIcon { get; set; } = Icon.NONE;
 
         // Constructors
-        public MenuSliderItem(string name, float min, float max, float startPosition, bool showDivider = false)
-            : base(name)
+        public MenuSliderItem(string name, int min, int max, int startPosition) : this(name, min, max, startPosition, false) { }
+        public MenuSliderItem(string name, int min, int max, int startPosition, bool showDivider) : this(name, null, min, max, startPosition, showDivider) { }
+        public MenuSliderItem(string name, string description, int min, int max, int startPosition) : this(name, description, min, max, startPosition, false) { }
+        public MenuSliderItem(string name, string description, int min, int max, int startPosition, bool showDivider) : base(name, description)
         {
             Min = min;
             Max = max;
@@ -35,6 +39,7 @@ namespace MenuAPI
         {
             return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
+
         // Other methods for drawing and handling input are also defined here...
     }
 }
