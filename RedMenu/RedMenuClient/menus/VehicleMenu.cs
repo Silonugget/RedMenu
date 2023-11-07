@@ -64,15 +64,37 @@ private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string nam
     }
 
     // Define what happens when an item in the submenu is selected
-    submenu.OnItemSelect += async (m, item, index) =>
+submenu.OnItemSelect += async (m, item, index) =>
+{
+    // Check for the "classic" item and execute the "ironhorse" command
+    if (item.Text.Equals("classic"))
     {
-        // Check if the "classic" item was selected to execute the "ironhorse" command
-        if (item.Text.Equals("classic"))
-        {
-            // Execute the 'ironhorse' command
-            ExecuteCommand("ironhorse");
-            return; // Return after command execution to prevent further code execution
-        }
+        ExecuteCommand("ironhorse");
+        return; // Stop further execution
+    }
+    // Check for the "offroad" item and execute the "spawn_truck" command
+    else if (item.Text.Equals("offroad"))
+    {
+        ExecuteCommand("spawn_truck");
+        return; // Stop further execution
+    }
+    // Check for the "emergency" item and execute the "spawn_police2" command
+    else if (item.Text.Equals("emergency"))
+    {
+        ExecuteCommand("spawn_police2");
+        return; // Stop further execution
+    }
+    // Check for the "sport" item and execute the "g37" command
+    else if (item.Text.Equals("sport"))
+    {
+        ExecuteCommand("g37");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("Jet Horse Ski"))
+    {
+        ExecuteCommand("jetwaterhorski");
+        return; // Stop further execution
+    }
 
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
@@ -195,8 +217,15 @@ private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string nam
                 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
                 // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "hash1", "hash2", "classic" };
+                List<string> ironHorseHashes = new List<string> { "Classic", "Offroad", "Sport", "HorseBat", "HorseBat Classic", "Emergency" };
                 AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
+                // Water Horses Submenu
+                List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
+                AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
+
+               // Air Horses Submenu
+               List<string> airHorseHashes = new List<string> { "Air Horse" };
+               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse.");
 
 
     // Regular Vehicles Submenu
