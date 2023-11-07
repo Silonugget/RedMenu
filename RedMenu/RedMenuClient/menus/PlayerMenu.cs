@@ -16,14 +16,10 @@ namespace MenuAPI
     public class MenuSliderItem : MenuItem
     {
         private float _position;
-        private float lastValue; // Track the last value
 
         public float Min { get; private set; }
         public float Max { get; private set; }
         public bool ShowDivider { get; set; }
-
-        // Event to notify subscribers when the value changes
-        public event Action<MenuSliderItem, float> OnValueChanged;
 
         public float Position
         {
@@ -33,7 +29,7 @@ namespace MenuAPI
                 if (_position != value)
                 {
                     _position = value;
-                    OnValueChanged?.Invoke(this, value); // Raise the event when the value changes
+                    ValueChanged(value); // Raise the event when the value changes
                 }
             }
         }
@@ -49,21 +45,15 @@ namespace MenuAPI
             lastValue = startPosition; // Initialize lastValue with startPosition
         }
 
-        // Method to update the player's scale
-        public void UpdatePlayerScale()
-        {
-            // Update the player's scale using the new value
-            Function.Call((Hash)0x4707E9C23D8CA3FE, PlayerPedId(), Position);
-        }
+        // Event that clients can subscribe to in order to be notified when the value changes
+        public event Action<MenuSliderItem, float> OnValueChanged;
 
-        // Method to map the slider value
-        public float Map(int val, int in_min, int in_max, float out_min, float out_max)
+        // Call this method when the slider value changes
+        protected void ValueChanged(float newValue)
         {
-            return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+            OnValueChanged?.Invoke(this, newValue);
         }
-    }
-}
-
+        
 namespace RedMenuClient.menus
 {
     static class PlayerMenu
