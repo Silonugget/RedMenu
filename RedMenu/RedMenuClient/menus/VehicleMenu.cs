@@ -95,7 +95,16 @@ submenu.OnItemSelect += async (m, item, index) =>
         ExecuteCommand("jetwaterhorski");
         return; // Stop further execution
     }
-
+        else if (item.Text.Equals("HorseBat"))
+    {
+        ExecuteCommand("bat");
+        return; // Stop further execution
+    }
+            else if (item.Text.Equals("HorseBat Classic"))
+    {
+        ExecuteCommand("bat2");
+        return; // Stop further execution
+    }
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
         {
