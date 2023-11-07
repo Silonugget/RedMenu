@@ -21,6 +21,8 @@ namespace MenuAPI
         public int Position { get; set; } = 0;
         public Icon SliderLeftIcon { get; set; } = Icon.NONE;
         public Icon SliderRightIcon { get; set; } = Icon.NONE;
+        public System.Drawing.Color BackgroundColor { get; set; } = System.Drawing.Color.FromArgb(255, 24, 93, 151);
+        public System.Drawing.Color BarColor { get; set; } = System.Drawing.Color.FromArgb(255, 53, 165, 223);
 
         // Constructors
         public MenuSliderItem(string name, int min, int max, int startPosition) : this(name, min, max, startPosition, false) { }
