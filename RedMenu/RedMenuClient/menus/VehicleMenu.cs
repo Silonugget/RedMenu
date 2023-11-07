@@ -178,8 +178,9 @@ namespace RedMenuClient.menus
 
         // Add Vehicle Submenus for different types of vehicles, including Iron Horses with "classic"
         // You need to define your list of hashes for the iron horses here, including the string "classic"
-        List<string> ironHorseHashes = new List<string> { /* iron horse hashes as strings */, "classic" };
+        List<string> ironHorseHashes = new List<string> { "hash1", "hash2", "classic" };
         AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
+
 
 
     // Regular Vehicles Submenu
