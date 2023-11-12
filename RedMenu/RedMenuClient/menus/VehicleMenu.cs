@@ -105,6 +105,21 @@ submenu.OnItemSelect += async (m, item, index) =>
         ExecuteCommand("bat2");
         return; // Stop further execution
     }
+            else if (item.Text.Equals("Muscle"))
+    {
+        ExecuteCommand("silocar");
+        return; // Stop further execution
+    }
+            else if (item.Text.Equals("Super Sport"))
+    {
+        ExecuteCommand("ironsport");
+        return; // Stop further execution
+    }
+            else if (item.Text.Equals("Xwing"))
+    {
+        ExecuteCommand("xwing");
+        return; // Stop further execution
+    }
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
         {
@@ -226,15 +241,15 @@ submenu.OnItemSelect += async (m, item, index) =>
                 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
                 // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "Classic", "Offroad", "Sport", "HorseBat", "HorseBat Classic", "Emergency" };
+                List<string> ironHorseHashes = new List<string> { "Classic", "Offroad", "Muscle", "Sport", "Super Sport", "HorseBat", "HorseBat Classic", "Emergency" };
                 AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
                 // Water Horses Submenu
                 List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
                 AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
 
                // Air Horses Submenu
-               List<string> airHorseHashes = new List<string> { "Air Horse" };
-               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse.");
+               List<string> airHorseHashes = new List<string> { "Xwing" };
+               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
 
 
     // Regular Vehicles Submenu
