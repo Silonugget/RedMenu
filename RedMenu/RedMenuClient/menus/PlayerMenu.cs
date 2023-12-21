@@ -652,27 +652,33 @@ namespace RedMenuClient.menus
 
             MenuListItem moods = new MenuListItem("Mood", new List<string>() { "None", "Aiming", "Angry", "Burning", "Cocky", "Cold", "Confused", "Cower", "Disgust", "Drunk", "Happy", "Hot", "Normal", "Sad", "Seductive", "Scared", "Sleeping", "Smug" }, 0, "Change your mood.");
 
-            playerOutfit = new MenuDynamicListItem("Select Outfit", "0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+            int maxOutfits = 4; // Set the maximum number of outfits
+
+    playerOutfit = new MenuDynamicListItem("Select Outfit", "0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+{
+    if (int.TryParse(item.CurrentItem, out int val))
+    {
+        int newVal = val;
+        if (left)
+        {
+            newVal--;
+            if (newVal < 0)
             {
-                if (int.TryParse(item.CurrentItem, out int val))
-                {
-                    int newVal = val;
-                    if (left)
-                    {
-                        newVal--;
-                        if (newVal < 0)
-                        {
-                            newVal = 0;
-                        }
-                    }
-                    else
-                    {
-                        newVal++;
-                    }
-                    SetPedOutfitPreset(PlayerPedId(), newVal, 0);
-                    return newVal.ToString();
-                }
-                return "0";
+                newVal = maxOutfits - 1; // Loop back to the last outfit if going below 0
+            }
+        }
+        else
+        {
+            newVal++;
+            if (newVal >= maxOutfits)
+            {
+                newVal = 0; // Wrap around to the first outfit if going above maxOutfits
+            }
+        }
+        SetPedOutfitPreset(PlayerPedId(), newVal, 0);
+        return newVal.ToString();
+    }
+    return "0";
             }), "Select a predefined outfit for this ped. Outfits are made by Rockstar. Note the selected value can go up indefinitely because we don't know how to check for the max amount of outfits yet, so more native research is needed.");
 
             if (PermissionsManager.IsAllowed(Permission.PMRestoreInnerCores))
