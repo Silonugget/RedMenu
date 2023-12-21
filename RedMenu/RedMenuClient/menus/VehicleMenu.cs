@@ -120,6 +120,31 @@ submenu.OnItemSelect += async (m, item, index) =>
         ExecuteCommand("xwing");
         return; // Stop further execution
     }
+    else if (item.Text.Equals("Lancer"))
+    {
+        ExecuteCommand("lancer");
+        return; // Stop further execution
+    }
+    else if (item.Text.Equals("Micahcycle"))
+    {
+        ExecuteCommand("micahcycle");
+        return; // Stop further execution
+    }
+    else if (item.Text.Equals("Sandrail"))
+    {
+        ExecuteCommand("sandrail");
+        return; // Stop further execution
+    }
+    else if (item.Text.Equals("Hellcat"))
+    {
+        ExecuteCommand("hellcat");
+        return; // Stop further execution
+    }
+    else if (item.Text.Equals("Fireplane"))
+    {
+        ExecuteCommand("fireplane");
+        return; // Stop further execution
+    }
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
         {
