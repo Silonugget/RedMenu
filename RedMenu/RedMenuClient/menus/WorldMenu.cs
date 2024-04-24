@@ -38,11 +38,24 @@ namespace RedMenuClient.menus
         {
             if (setupDone) return;
             setupDone = true;
+                // Add the "Time+Weather Options" menu item.
+    MenuItem timeWeatherOptions = new MenuItem("Time+Weather Options", "View and set time and weather options.");
+    menu.AddMenuItem(timeWeatherOptions);
+
+    // Event handler to execute when "Time+Weather Options" is selected.
+    menu.OnItemSelect += (sender, item, index) =>
+    {
+        if (item == timeWeatherOptions)
+        {
+            menu.CloseMenu(); // Closes the current menu.
+            ExecuteCommand("weatherui"); // Execute the "weatherui" command.
+        }
+    };
 
             if (PermissionsManager.IsAllowed(Permission.WOTimecycleModifiers))
             {
-                Menu timecycleModifiersMenu = new Menu("Timecycle", "Set/Clear timecycle modifiers");
-                MenuItem timeCycleModifiers = new MenuItem("Timecycle Modifiers", "Set/Clear timecycle modifiers.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+                Menu timecycleModifiersMenu = new Menu("Filters", "Basically IG filters for RedDead");
+                MenuItem timeCycleModifiers = new MenuItem("Timecycle Modifiers", "Set/Clear filter.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
                 menu.AddMenuItem(timeCycleModifiers);
                 MenuController.AddSubmenu(menu, timecycleModifiersMenu);
                 MenuController.BindMenuItem(menu, timecycleModifiersMenu, timeCycleModifiers);
