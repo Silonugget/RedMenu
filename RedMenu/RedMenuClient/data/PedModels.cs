@@ -514,7 +514,6 @@ namespace RedMenuClient.data
             "U_F_M_HTLWIFE_01",
             "U_F_M_LagMother_01",
             "U_F_M_NbxResident_01",
-            "U_F_M_RhdNudeWoman_01",
             "U_F_M_RkSHomesteadTenant_01",
             "U_F_M_STORY_BLACKBELLE_01",
             "U_F_M_STORY_NIGHTFOLK_01",
@@ -976,7 +975,6 @@ namespace RedMenuClient.data
             "RE_MURDERCAMP_MALES_01",
             "RE_MURDERSUICIDE_FEMALES_01",
             "RE_MURDERSUICIDE_MALES_01",
-            "RE_NAKEDSWIMMER_MALES_01",
             "RE_ONTHERUN_MALES_01",
             "RE_OUTLAWLOOTER_MALES_01",
             "RE_PARLORAMBUSH_MALES_01",
@@ -1033,7 +1031,6 @@ namespace RedMenuClient.data
             "RE_WASHEDASHORE_MALES_01",
             "RE_WEALTHYCOUPLE_FEMALES_01",
             "RE_WEALTHYCOUPLE_MALES_01",
-            "RE_WILDMAN_01",
         };
 
         public static List<string> AnimalHashes { get; }
@@ -1655,7 +1652,6 @@ namespace RedMenuClient.data
             "mp_re_suspendedhunter_males_01",
             "mp_re_treasurehunter_females_01",
             "mp_re_treasurehunter_males_01",
-            "mp_re_wildman_males_01",
             "mp_recover_recipient_females_01",
             "mp_recover_recipient_males_01",
             "mp_repo_recipient_females_01",
