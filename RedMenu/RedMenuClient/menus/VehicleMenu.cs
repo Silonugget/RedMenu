@@ -296,7 +296,7 @@ submenu.OnItemSelect += async (m, item, index) =>
                 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
                 // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "Classic", "Offroad", "Sandrail", "Muscle", "Hellcat", "Sport", "Lancer", "Super Sport", "HorseBat", "Micahcycle", "HorseBat Classic", "Emergency" };
+                List<string> ironHorseHashes = new List<string> { "Classic", "More Classic", "Funny Classic", "Offroad", "Sandrail", "Muscle", "Hellcat", "Sport", "Lancer", "Super Sport", "HorseBat", "Micahcycle", "HorseBat Classic", "GTR", "Malibu", "Tank", "Emergency" };
                 AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
                 // Water Horses Submenu
                 List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
