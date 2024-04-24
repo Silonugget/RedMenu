@@ -72,6 +72,16 @@ submenu.OnItemSelect += async (m, item, index) =>
         ExecuteCommand("ironhorse");
         return; // Stop further execution
     }
+        else if (item.Text.Equals("More Classic"))
+    {
+        ExecuteCommand("classic");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("Funny Classic"))
+    {
+        ExecuteCommand("classic2");
+        return; // Stop further execution
+    }
     // Check for the "offroad" item and execute the "spawn_truck" command
     else if (item.Text.Equals("Offroad"))
     {
@@ -143,6 +153,26 @@ submenu.OnItemSelect += async (m, item, index) =>
     else if (item.Text.Equals("Fireplane"))
     {
         ExecuteCommand("fireplane");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("GTR"))
+    {
+        ExecuteCommand("gtr");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("Malibu"))
+    {
+        ExecuteCommand("malibu");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("Tank"))
+    {
+        ExecuteCommand("tank");
+        return; // Stop further execution
+    }
+        else if (item.Text.Equals("Roadster"))
+    {
+        ExecuteCommand("roadster");
         return; // Stop further execution
     }
         // Existing code for spawning vehicles
