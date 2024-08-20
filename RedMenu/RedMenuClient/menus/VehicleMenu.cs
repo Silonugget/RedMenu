@@ -108,109 +108,7 @@ namespace RedMenuClient.menus
 
                     return; // Stop further execution
                 }
-        else if (item.Text.Equals("More Classic"))
-    {
-        ExecuteCommand("classic");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("Funny Classic"))
-    {
-        ExecuteCommand("classic2");
-        return; // Stop further execution
-    }
-    // Check for the "offroad" item and execute the "spawn_truck" command
-    else if (item.Text.Equals("Offroad"))
-    {
-        ExecuteCommand("spawn_truck");
-        return; // Stop further execution
-    }
-    // Check for the "emergency" item and execute the "spawn_police2" command
-    else if (item.Text.Equals("Emergency"))
-    {
-        ExecuteCommand("spawn_police2");
-        return; // Stop further execution
-    }
-    // Check for the "sport" item and execute the "g37" command
-    else if (item.Text.Equals("Sport"))
-    {
-        ExecuteCommand("g37");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("Jet Horse Ski"))
-    {
-        ExecuteCommand("jetwaterhorski");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("HorseBat"))
-    {
-        ExecuteCommand("bat");
-        return; // Stop further execution
-    }
-            else if (item.Text.Equals("HorseBat Classic"))
-    {
-        ExecuteCommand("bat2");
-        return; // Stop further execution
-    }
-            else if (item.Text.Equals("Muscle"))
-    {
-        ExecuteCommand("silocar");
-        return; // Stop further execution
-    }
-            else if (item.Text.Equals("Super Sport"))
-    {
-        ExecuteCommand("ironsport");
-        return; // Stop further execution
-    }
-            else if (item.Text.Equals("Xwing"))
-    {
-        ExecuteCommand("xwing");
-        return; // Stop further execution
-    }
-    else if (item.Text.Equals("Lancer"))
-    {
-        ExecuteCommand("lancer");
-        return; // Stop further execution
-    }
-    else if (item.Text.Equals("Micahcycle"))
-    {
-        ExecuteCommand("micahcycle");
-        return; // Stop further execution
-    }
-    else if (item.Text.Equals("Sandrail"))
-    {
-        ExecuteCommand("sandrail");
-        return; // Stop further execution
-    }
-    else if (item.Text.Equals("Hellcat"))
-    {
-        ExecuteCommand("hellcat");
-        return; // Stop further execution
-    }
-    else if (item.Text.Equals("Fireplane"))
-    {
-        ExecuteCommand("fireplane");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("GTR"))
-    {
-        ExecuteCommand("gtr");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("Malibu"))
-    {
-        ExecuteCommand("malibu");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("Tank"))
-    {
-        ExecuteCommand("tank");
-        return; // Stop further execution
-    }
-        else if (item.Text.Equals("Roadster"))
-    {
-        ExecuteCommand("roadster");
-        return; // Stop further execution
-    }
+
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
         {
@@ -326,23 +224,53 @@ namespace RedMenuClient.menus
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
        
-                // Addon Vehicles Submenu
-                Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-                MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-                spawnVehicleMenu.AddMenuItem(addonVehicles);
-                MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-                MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+// Addon Vehicles Submenu
+Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+spawnVehicleMenu.AddMenuItem(addonVehicles);
+MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-                // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "Classic", "More Classic", "Funny Classic", "Offroad", "Sandrail", "Muscle", "Hellcat", "Sport", "Lancer", "Super Sport", "HorseBat", "Micahcycle", "HorseBat Classic", "Roadster", "GTR", "Malibu", "Tank", "Emergency" };
-                AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
-                // Water Horses Submenu
-                List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
-                AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
+// Loop through the vehicleConfigs to create menus dynamically based on vehicle types
+foreach (var vehicleTypeEntry in vehicleConfigs)
+{
+    // Extract the vehicle type and config data
+    string vehicleName = vehicleTypeEntry.Key;
+    JObject vehicleData = vehicleTypeEntry.Value;
 
-               // Air Horses Submenu
-               List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
-               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
+    // Extract the type of the vehicle (car, boat, plane, etc.)
+    string type = vehicleData["type"].ToString();
+
+    // Check if a submenu for this type already exists
+    Menu typeMenu = addonVehiclesMenu.GetSubMenu(type);
+    if (typeMenu == null)
+    {
+        // If it doesn't exist, create a new submenu for this type
+        typeMenu = new Menu(type, $"Spawn a {type}");
+        MenuItem typeMenuItem = new MenuItem(type, $"Spawn a {type}.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+        
+        // Add the type submenu to the main addonVehiclesMenu
+        addonVehiclesMenu.AddMenuItem(typeMenuItem);
+        MenuController.AddSubmenu(addonVehiclesMenu, typeMenu);
+        MenuController.BindMenuItem(addonVehiclesMenu, typeMenu, typeMenuItem);
+    }
+
+    // Create a button for each vehicle title within the corresponding type
+    MenuItem vehicleButton = new MenuItem(vehicleName, $"Spawn {vehicleName}");
+    typeMenu.AddMenuItem(vehicleButton);
+
+    // Bind the button to the vehicle spawn action
+    typeMenu.OnItemSelect += async (m, item, index) =>
+    {
+        if (item == vehicleButton)
+        {
+            // Trigger the spawn command or function with the selected vehicle's model
+            string objectModel = vehicleData["objectModel"].ToString();
+            ExecuteCommand($"balboni {objectModel}");
+        }
+    };
+}
+
 
 
     // Regular Vehicles Submenu
