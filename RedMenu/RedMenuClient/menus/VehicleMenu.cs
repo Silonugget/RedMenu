@@ -233,12 +233,8 @@ MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 // Dictionary to store menu items and their associated vehicle model
 Dictionary<MenuItem, string> vehicleMenuItems = new Dictionary<MenuItem, string>();
 
-// Variables to track the number of vehicles in each category for debugging
-int carCount = 0;
-int bikeCount = 0;
-int planeCount = 0;
-int heliCount = 0;
-int otherCount = 0;
+// Debug: Check if vehicleConfigs is populated
+Debug.WriteLine($"vehicleConfigs count: {vehicleConfigs.Count}");
 
 // Loop through the vehicleConfigs and add the vehicles to the menu
 foreach (var vehicleTypeEntry in vehicleConfigs)
@@ -247,44 +243,30 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     string vehicleName = vehicleTypeEntry.Key;
     JObject vehicleData = vehicleTypeEntry.Value;
 
+    // Debug: Ensure vehicle data is being accessed correctly
+    Debug.WriteLine($"Processing vehicle: {vehicleName}");
+
     // Extract the type of the vehicle
+    if (!vehicleData.ContainsKey("type") || !vehicleData.ContainsKey("objectModel"))
+    {
+        Debug.WriteLine($"Skipping vehicle {vehicleName} due to missing data.");
+        continue; // Skip if required fields are missing
+    }
+
     string type = vehicleData["type"].ToString().ToLower(); // Make it case-insensitive
+    string objectModel = vehicleData["objectModel"].ToString();
+
+    // Debug: Verify the extracted data
+    Debug.WriteLine($"Vehicle {vehicleName} - Type: {type}, Model: {objectModel}");
 
     // Create a button for each vehicle
     MenuItem vehicleButton = new MenuItem($"{type.ToUpper()}: {vehicleName}", $"Spawn {vehicleName}");
 
     // Store the vehicle button and its corresponding model
-    vehicleMenuItems.Add(vehicleButton, vehicleData["objectModel"].ToString());
+    vehicleMenuItems.Add(vehicleButton, objectModel);
 
-    // Sort the vehicles into their respective categories and add to the main menu
-    switch (type)
-    {
-        case "car":
-            addonVehiclesMenu.AddMenuItem(vehicleButton);
-            carCount++;
-            break;
-
-        case "bike":
-            addonVehiclesMenu.AddMenuItem(vehicleButton);
-            bikeCount++;
-            break;
-
-        case "plane":
-            addonVehiclesMenu.AddMenuItem(vehicleButton);
-            planeCount++;
-            break;
-
-        case "heli":
-        case "helicopter":
-            addonVehiclesMenu.AddMenuItem(vehicleButton);
-            heliCount++;
-            break;
-
-        default:
-            addonVehiclesMenu.AddMenuItem(vehicleButton);
-            otherCount++;
-            break;
-    }
+    // Sort the vehicles into the main menu based on type and add to the menu
+    addonVehiclesMenu.AddMenuItem(vehicleButton);
 }
 
 // Bind the OnItemSelect event to the addonVehiclesMenu
@@ -298,12 +280,6 @@ addonVehiclesMenu.OnItemSelect += (menu, item, index) =>
     }
 };
 
-// Debugging print statements to check the number of vehicles in each category
-Debug.WriteLine($"Cars: {carCount}");
-Debug.WriteLine($"Bikes: {bikeCount}");
-Debug.WriteLine($"Planes: {planeCount}");
-Debug.WriteLine($"Helicopters: {heliCount}");
-Debug.WriteLine($"Other Vehicles: {otherCount}");
 
 
 
