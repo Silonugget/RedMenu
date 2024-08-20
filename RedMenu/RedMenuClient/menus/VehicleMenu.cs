@@ -263,7 +263,7 @@ submenu.OnItemSelect += async (m, item, index) =>
         public static void SetupMenu()
         {
             if (setupDone) return;
-            TriggerServerEvent("requestVehicleConfig");
+            BaseScript.TriggerServerEvent("requestVehicleConfig");
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
