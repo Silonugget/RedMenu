@@ -224,46 +224,12 @@ namespace RedMenuClient.menus
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
        
-// Addon Vehicles Submenu
-Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+// Addon Vehicles Menu
+Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Select a vehicle to spawn.");
 MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
 spawnVehicleMenu.AddMenuItem(addonVehicles);
 MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
-
-// Submenus for specific categories
-Menu carMenu = new Menu("Cars", "Spawn a car.");
-Menu bikeMenu = new Menu("Bikes", "Spawn a bike.");
-Menu planeMenu = new Menu("Planes", "Spawn a plane.");
-Menu heliMenu = new Menu("Helicopters", "Spawn a helicopter.");
-Menu otherMenu = new Menu("Other Vehicles", "Spawn other types of vehicles.");
-
-// Menu items to represent these submenus in the main addon vehicles menu
-MenuItem carMenuItem = new MenuItem("Cars", "Spawn a car.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-MenuItem bikeMenuItem = new MenuItem("Bikes", "Spawn a bike.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-MenuItem planeMenuItem = new MenuItem("Planes", "Spawn a plane.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-MenuItem heliMenuItem = new MenuItem("Helicopters", "Spawn a helicopter.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-MenuItem otherMenuItem = new MenuItem("Other Vehicles", "Spawn other types of vehicles.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-
-// Add the menu items to the addon vehicles menu
-addonVehiclesMenu.AddMenuItem(carMenuItem);
-addonVehiclesMenu.AddMenuItem(bikeMenuItem);
-addonVehiclesMenu.AddMenuItem(planeMenuItem);
-addonVehiclesMenu.AddMenuItem(heliMenuItem);
-addonVehiclesMenu.AddMenuItem(otherMenuItem);
-
-// Bind the submenus to the addon vehicles menu
-MenuController.AddSubmenu(addonVehiclesMenu, carMenu);
-MenuController.AddSubmenu(addonVehiclesMenu, bikeMenu);
-MenuController.AddSubmenu(addonVehiclesMenu, planeMenu);
-MenuController.AddSubmenu(addonVehiclesMenu, heliMenu);
-MenuController.AddSubmenu(addonVehiclesMenu, otherMenu);
-
-MenuController.BindMenuItem(addonVehiclesMenu, carMenu, carMenuItem);
-MenuController.BindMenuItem(addonVehiclesMenu, bikeMenu, bikeMenuItem);
-MenuController.BindMenuItem(addonVehiclesMenu, planeMenu, planeMenuItem);
-MenuController.BindMenuItem(addonVehiclesMenu, heliMenu, heliMenuItem);
-MenuController.BindMenuItem(addonVehiclesMenu, otherMenu, otherMenuItem);
 
 // Variables to track the number of vehicles in each category for debugging
 int carCount = 0;
@@ -272,7 +238,7 @@ int planeCount = 0;
 int heliCount = 0;
 int otherCount = 0;
 
-// Loop through the vehicleConfigs and sort them into their respective submenus
+// Loop through the vehicleConfigs and sort them into the main menu by type
 foreach (var vehicleTypeEntry in vehicleConfigs)
 {
     // Extract the vehicle name and config data
@@ -283,40 +249,40 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     string type = vehicleData["type"].ToString().ToLower(); // Make it case-insensitive
 
     // Create a button for each vehicle
-    MenuItem vehicleButton = new MenuItem(vehicleName, $"Spawn {vehicleName}");
+    MenuItem vehicleButton = new MenuItem($"{type.ToUpper()}: {vehicleName}", $"Spawn {vehicleName}");
 
-    // Sort the vehicles into their respective submenus based on the type
+    // Sort the vehicles into their respective categories
     switch (type)
     {
         case "car":
-            carMenu.AddMenuItem(vehicleButton);
+            addonVehiclesMenu.AddMenuItem(vehicleButton);
             carCount++;
             break;
 
         case "bike":
-            bikeMenu.AddMenuItem(vehicleButton);
+            addonVehiclesMenu.AddMenuItem(vehicleButton);
             bikeCount++;
             break;
 
         case "plane":
-            planeMenu.AddMenuItem(vehicleButton);
+            addonVehiclesMenu.AddMenuItem(vehicleButton);
             planeCount++;
             break;
 
         case "heli":
         case "helicopter":
-            heliMenu.AddMenuItem(vehicleButton);
+            addonVehiclesMenu.AddMenuItem(vehicleButton);
             heliCount++;
             break;
 
         default:
-            otherMenu.AddMenuItem(vehicleButton);
+            addonVehiclesMenu.AddMenuItem(vehicleButton);
             otherCount++;
             break;
     }
 
     // Bind the vehicle spawn action to the vehicle button
-    vehicleButton.OnSelect += async (m, item) =>
+    vehicleButton.Activated += (m, selectedItem) =>
     {
         string objectModel = vehicleData["objectModel"].ToString();
         ExecuteCommand($"spawn {objectModel}");
