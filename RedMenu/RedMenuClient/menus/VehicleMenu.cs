@@ -265,6 +265,13 @@ MenuController.BindMenuItem(addonVehiclesMenu, planeMenu, planeMenuItem);
 MenuController.BindMenuItem(addonVehiclesMenu, heliMenu, heliMenuItem);
 MenuController.BindMenuItem(addonVehiclesMenu, otherMenu, otherMenuItem);
 
+// Variables to track the number of vehicles in each category for debugging
+int carCount = 0;
+int bikeCount = 0;
+int planeCount = 0;
+int heliCount = 0;
+int otherCount = 0;
+
 // Loop through the vehicleConfigs and sort them into their respective submenus
 foreach (var vehicleTypeEntry in vehicleConfigs)
 {
@@ -273,76 +280,57 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     JObject vehicleData = vehicleTypeEntry.Value;
 
     // Extract the type of the vehicle
-    string type = vehicleData["type"].ToString();
+    string type = vehicleData["type"].ToString().ToLower(); // Make it case-insensitive
 
     // Create a button for each vehicle
     MenuItem vehicleButton = new MenuItem(vehicleName, $"Spawn {vehicleName}");
 
     // Sort the vehicles into their respective submenus based on the type
-    switch (type.ToLower())
+    switch (type)
     {
         case "car":
             carMenu.AddMenuItem(vehicleButton);
-            carMenu.OnItemSelect += (m, item, index) =>
-            {
-                if (item == vehicleButton)
-                {
-                    string objectModel = vehicleData["objectModel"].ToString();
-                    ExecuteCommand($"spawn {objectModel}");
-                }
-            };
+            carCount++;
             break;
 
         case "bike":
             bikeMenu.AddMenuItem(vehicleButton);
-            bikeMenu.OnItemSelect += (m, item, index) =>
-            {
-                if (item == vehicleButton)
-                {
-                    string objectModel = vehicleData["objectModel"].ToString();
-                    ExecuteCommand($"spawn {objectModel}");
-                }
-            };
+            bikeCount++;
             break;
 
         case "plane":
             planeMenu.AddMenuItem(vehicleButton);
-            planeMenu.OnItemSelect += (m, item, index) =>
-            {
-                if (item == vehicleButton)
-                {
-                    string objectModel = vehicleData["objectModel"].ToString();
-                    ExecuteCommand($"spawn {objectModel}");
-                }
-            };
+            planeCount++;
             break;
 
         case "heli":
         case "helicopter":
             heliMenu.AddMenuItem(vehicleButton);
-            heliMenu.OnItemSelect += (m, item, index) =>
-            {
-                if (item == vehicleButton)
-                {
-                    string objectModel = vehicleData["objectModel"].ToString();
-                    ExecuteCommand($"spawn {objectModel}");
-                }
-            };
+            heliCount++;
             break;
 
         default:
             otherMenu.AddMenuItem(vehicleButton);
-            otherMenu.OnItemSelect += (m, item, index) =>
-            {
-                if (item == vehicleButton)
-                {
-                    string objectModel = vehicleData["objectModel"].ToString();
-                    ExecuteCommand($"spawn {objectModel}");
-                }
-            };
+            otherCount++;
             break;
     }
+
+    // Bind the vehicle spawn action to the vehicle button
+    vehicleButton.OnSelect += async (m, item) =>
+    {
+        string objectModel = vehicleData["objectModel"].ToString();
+        ExecuteCommand($"spawn {objectModel}");
+        Debug.WriteLine($"Spawning vehicle: {vehicleName} with model: {objectModel}");
+    };
 }
+
+// Debugging print statements to check the number of vehicles in each category
+Debug.WriteLine($"Cars: {carCount}");
+Debug.WriteLine($"Bikes: {bikeCount}");
+Debug.WriteLine($"Planes: {planeCount}");
+Debug.WriteLine($"Helicopters: {heliCount}");
+Debug.WriteLine($"Other Vehicles: {otherCount}");
+
 
 
 
