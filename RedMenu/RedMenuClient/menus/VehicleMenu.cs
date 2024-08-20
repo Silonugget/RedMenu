@@ -28,61 +28,13 @@ namespace RedMenuClient.menus
             distance = GetDistanceBetweenCoords(pCoords.X, pCoords.Y, pCoords.Z, vCoords.X, vCoords.Y, vCoords.Z, true);
         }
     }
-    public class VehicleHandler : BaseScript
-    {
-        // Initialize vehicleConfigs to avoid null reference errors
-        private static Dictionary<string, Dictionary<string, object>> vehicleConfigs = new Dictionary<string, Dictionary<string, object>>();
 
-        public VehicleHandler()
-        {
-            EventHandlers["receiveVehicleConfig"] += new Action<dynamic>(OnReceiveVehicleConfig);
-            // Automatically request the vehicle config when the script is loaded
-        RequestVehicleConfig();
-        }
-
-        [EventHandler("receiveVehicleConfig")]
-        private static void OnReceiveVehicleConfig(dynamic config)
-        {
-            try
-            {
-                if (config != null)
-                {
-                    // Convert dynamic config into a dictionary for easier processing in C#
-                    vehicleConfigs = config.ToObject<Dictionary<string, Dictionary<string, object>>>() ?? new Dictionary<string, Dictionary<string, object>>();
-                }
-                else
-                {
-                    Debug.WriteLine("Received null config.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error processing vehicle config: {ex.Message}");
-            }
-        }
-
-        public static void RequestVehicleConfig()
-        {
-            // Triggering a server event from the client
-            BaseScript.TriggerServerEvent("requestVehicleConfig");
-        }
-    }
+    
     class VehicleMenu
     {
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
         private static int currentVehicle = 0;
-            // Define the vehicleConfigs variable globally
-    private static Dictionary<string, Dictionary<string, object>> vehicleConfigs;
-
-        // Lua event handler to receive vehicle configs
-        [EventHandler("receiveVehicleConfig")]
-        private static void OnReceiveVehicleConfig(dynamic config)
-        {
-            // Convert dynamic config into a dictionary for easier processing in C#
-            vehicleConfigs = config.ToObject<Dictionary<string, Dictionary<string, object>>>();
-        }
-
         private static int BlipAddForEntity(int blipHash, int entity)
         {
             return Function.Call<int>((Hash)0x23F74C2FDA6E7C61, blipHash, entity);
@@ -119,11 +71,6 @@ submenu.OnItemSelect += async (m, item, index) =>
     if (item.Text.Equals("Classic"))
     {
         ExecuteCommand("ironhorse");
-        // Count unique types in the vehicle config
-                    var distinctTypes = vehicleConfigs.Values.Select(v => v["type"]).Distinct().Count();
-
-
-                    Debug.WriteLine($"Number of distinct vehicle types: {distinctTypes}");
                 
         return; // Stop further execution
     }
