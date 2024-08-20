@@ -284,7 +284,7 @@ namespace RedMenuClient.menus
         {
             if (setupDone) return;
             // Trigger the server event to request vehicle config
-    BaseScript.TriggerServerEvent("requestVehicleConfig");
+    BaseScript.TriggerServerEvent("requestVehicleConfigJSON");
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
