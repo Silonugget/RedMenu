@@ -82,7 +82,7 @@ submenu.OnItemSelect += async (m, item, index) =>
 
 
                     Debug.WriteLine($"Number of distinct vehicle types: {distinctTypes}");
-                }
+                
         return; // Stop further execution
     }
         else if (item.Text.Equals("More Classic"))
