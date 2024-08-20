@@ -245,18 +245,6 @@ namespace RedMenuClient.menus
                 AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
 
 
-                // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "Classic", "More Classic", "Funny Classic", "Offroad", "Sandrail", "Muscle", "Hellcat", "Sport", "Lancer", "Super Sport", "HorseBat", "Micahcycle", "HorseBat Classic", "Roadster", "GTR", "Malibu", "Tank", "Emergency" };
-                AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
-                // Water Horses Submenu
-                List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
-                AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
-
-               // Air Horses Submenu
-               List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
-               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
-
-
                // Air Horses Submenu
                List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
                AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
