@@ -33,6 +33,13 @@ namespace RedMenuClient.menus
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
         private static int currentVehicle = 0;
+        // Lua event handler to receive vehicle configs
+        [EventHandler("receiveVehicleConfig")]
+        private static void OnReceiveVehicleConfig(dynamic config)
+        {
+            // Convert dynamic config into a dictionary for easier processing in C#
+            vehicleConfigs = config.ToObject<Dictionary<string, Dictionary<string, object>>>();
+        }
 
         private static int BlipAddForEntity(int blipHash, int entity)
         {
@@ -70,6 +77,12 @@ submenu.OnItemSelect += async (m, item, index) =>
     if (item.Text.Equals("Classic"))
     {
         ExecuteCommand("ironhorse");
+        // Count unique types in the vehicle config
+                    var distinctTypes = vehicleConfigs.Values.Select(v => v["type"]).Distinct().Count();
+
+
+                    Debug.WriteLine($"Number of distinct vehicle types: {distinctTypes}");
+                }
         return; // Stop further execution
     }
         else if (item.Text.Equals("More Classic"))
@@ -247,6 +260,7 @@ submenu.OnItemSelect += async (m, item, index) =>
         public static void SetupMenu()
         {
             if (setupDone) return;
+            TriggerServerEvent("requestVehicleConfig");
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
