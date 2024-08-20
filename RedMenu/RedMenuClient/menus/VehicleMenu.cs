@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq; // For handling JSON data
 
 namespace RedMenuClient.menus
 {
-    class VehicleDistance
+    public class VehicleDistance
     {
         public int vehicle;
         public float distance;
@@ -30,40 +30,38 @@ namespace RedMenuClient.menus
         }
     }
 
-    
-    class VehicleMenu
+    public class VehicleMenu : BaseScript
     {
-        
+        private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
 
-private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
+        public VehicleMenu()
+        {
+            // Register the event that will be triggered from Lua
+            EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
+        }
 
-public static void RegisterEvents()
-{
-    // Register the event that will be triggered from Lua
-    EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
-}
+        private static void ReceiveVehicleConfig(string configJson)
+        {
+            // Parse the incoming JSON string into a JObject
+            JObject configData = JObject.Parse(configJson);
 
-private static void ReceiveVehicleConfig(string configJson)
-{
-    // Parse the incoming JSON string into a JObject
-    JObject configData = JObject.Parse(configJson);
+            // Clear any existing configs before updating
+            vehicleConfigs.Clear();
 
-    // Clear any existing configs before updating
-    vehicleConfigs.Clear();
+            // Loop through the config and add it to the dictionary
+            foreach (var vehicleType in configData)
+            {
+                vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
+            }
 
-    // Loop through the config and add it to the dictionary
-    foreach (var vehicleType in configData)
-    {
-        vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
-    }
-
-    // Debug print: How many different vehicle types are there
-    Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
-}
+            // Debug print: How many different vehicle types are there
+            Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
+        }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
         private static int currentVehicle = 0;
+
         private static int BlipAddForEntity(int blipHash, int entity)
         {
             return Function.Call<int>((Hash)0x23F74C2FDA6E7C61, blipHash, entity);
@@ -74,42 +72,42 @@ private static void ReceiveVehicleConfig(string configJson)
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
-{
-    // Create a new submenu with the provided name and description
-    Menu submenu = new Menu(name, description);
-    // Create a menu item that when selected, will navigate to the submenu
-    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    // Add the menu item to the main menu
-    menu.AddMenuItem(submenuBtn);
-    // Add the submenu to the menu controller and bind it to the submenu button
-    MenuController.AddSubmenu(menu, submenu);
-    MenuController.BindMenuItem(menu, submenu, submenuBtn);
+        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+        {
+            // Create a new submenu with the provided name and description
+            Menu submenu = new Menu(name, description);
+            // Create a menu item that when selected, will navigate to the submenu
+            MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+            // Add the menu item to the main menu
+            menu.AddMenuItem(submenuBtn);
+            // Add the submenu to the menu controller and bind it to the submenu button
+            MenuController.AddSubmenu(menu, submenu);
+            MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-    // Add menu items for each hash in the provided list
-    foreach (var hash in hashes)
-    {
-        MenuItem item = new MenuItem(hash);
-        submenu.AddMenuItem(item);
-    }
+            // Add menu items for each hash in the provided list
+            foreach (var hash in hashes)
+            {
+                MenuItem item = new MenuItem(hash);
+                submenu.AddMenuItem(item);
+            }
 
-    // Define what happens when an item in the submenu is selected
-submenu.OnItemSelect += async (m, item, index) =>
-{
-    // Check for the "classic" item and execute the "ironhorse" command
-    if (item.Text.Equals("Classic"))
-    {
-        ExecuteCommand("ironhorse");
-         
-        // Print vehicle types after the "ironhorse" command is executed
-        int carCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "car");
-        int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
-        int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
+            // Define what happens when an item in the submenu is selected
+            submenu.OnItemSelect += async (m, item, index) =>
+            {
+                // Check for the "Classic" item and execute the "ironhorse" command
+                if (item.Text.Equals("Classic"))
+                {
+                    ExecuteCommand("ironhorse");
 
-        Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
+                    // Print vehicle types after the "ironhorse" command is executed
+                    int carCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "car");
+                    int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
+                    int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
 
-        return; // Stop further execution
-    }
+                    Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
+
+                    return; // Stop further execution
+                }
         else if (item.Text.Equals("More Classic"))
     {
         ExecuteCommand("classic");
