@@ -231,10 +231,13 @@ spawnVehicleMenu.AddMenuItem(addonVehicles);
 MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
+// Dictionary to keep track of submenus based on vehicle type
+Dictionary<string, Menu> typeMenus = new Dictionary<string, Menu>();
+
 // Loop through the vehicleConfigs to create menus dynamically based on vehicle types
 foreach (var vehicleTypeEntry in vehicleConfigs)
 {
-    // Extract the vehicle type and config data
+    // Extract the vehicle name and config data
     string vehicleName = vehicleTypeEntry.Key;
     JObject vehicleData = vehicleTypeEntry.Value;
 
@@ -242,25 +245,27 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     string type = vehicleData["type"].ToString();
 
     // Check if a submenu for this type already exists
-    Menu typeMenu = addonVehiclesMenu.GetSubMenu(type);
-    if (typeMenu == null)
+    if (!typeMenus.ContainsKey(type))
     {
         // If it doesn't exist, create a new submenu for this type
-        typeMenu = new Menu(type, $"Spawn a {type}");
+        Menu typeMenu = new Menu(type, $"Spawn a {type}");
         MenuItem typeMenuItem = new MenuItem(type, $"Spawn a {type}.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
         
         // Add the type submenu to the main addonVehiclesMenu
         addonVehiclesMenu.AddMenuItem(typeMenuItem);
         MenuController.AddSubmenu(addonVehiclesMenu, typeMenu);
         MenuController.BindMenuItem(addonVehiclesMenu, typeMenu, typeMenuItem);
+
+        // Store the submenu in the dictionary
+        typeMenus[type] = typeMenu;
     }
 
     // Create a button for each vehicle title within the corresponding type
     MenuItem vehicleButton = new MenuItem(vehicleName, $"Spawn {vehicleName}");
-    typeMenu.AddMenuItem(vehicleButton);
+    typeMenus[type].AddMenuItem(vehicleButton);
 
     // Bind the button to the vehicle spawn action
-    typeMenu.OnItemSelect += async (m, item, index) =>
+    typeMenus[type].OnItemSelect += async (m, item, index) =>
     {
         if (item == vehicleButton)
         {
@@ -270,6 +275,7 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
         }
     };
 }
+
 
 
 
