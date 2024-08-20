@@ -32,6 +32,34 @@ namespace RedMenuClient.menus
     
     class VehicleMenu
     {
+        using Newtonsoft.Json.Linq; // For handling JSON data
+
+private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
+
+public static void RegisterEvents()
+{
+    // Register the event that will be triggered from Lua
+    EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
+}
+
+private static void ReceiveVehicleConfig(string configJson)
+{
+    // Parse the incoming JSON string into a JObject
+    JObject configData = JObject.Parse(configJson);
+
+    // Clear any existing configs before updating
+    vehicleConfigs.Clear();
+
+    // Loop through the config and add it to the dictionary
+    foreach (var vehicleType in configData)
+    {
+        vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
+    }
+
+    // Debug print: How many different vehicle types are there
+    Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
+}
+
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
         private static int currentVehicle = 0;
@@ -71,7 +99,14 @@ submenu.OnItemSelect += async (m, item, index) =>
     if (item.Text.Equals("Classic"))
     {
         ExecuteCommand("ironhorse");
-                
+         
+        // Print vehicle types after the "ironhorse" command is executed
+        int carCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "car");
+        int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
+        int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
+
+        Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
+
         return; // Stop further execution
     }
         else if (item.Text.Equals("More Classic"))
@@ -249,6 +284,7 @@ submenu.OnItemSelect += async (m, item, index) =>
         public static void SetupMenu()
         {
             if (setupDone) return;
+            RegisterEvents(); // Register the event listeners here
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
