@@ -11,6 +11,7 @@ using RedMenuShared;
 using RedMenuClient.util;
 using System.Net;
 using RedMenuClient.data;
+using Newtonsoft.Json.Linq; // For handling JSON data
 
 namespace RedMenuClient.menus
 {
@@ -32,7 +33,7 @@ namespace RedMenuClient.menus
     
     class VehicleMenu
     {
-        using Newtonsoft.Json.Linq; // For handling JSON data
+        
 
 private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
 
