@@ -33,6 +33,9 @@ namespace RedMenuClient.menus
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
         private static int currentVehicle = 0;
+            // Define the vehicleConfigs variable globally
+    private static Dictionary<string, Dictionary<string, object>> vehicleConfigs;
+
         // Lua event handler to receive vehicle configs
         [EventHandler("receiveVehicleConfig")]
         private static void OnReceiveVehicleConfig(dynamic config)
