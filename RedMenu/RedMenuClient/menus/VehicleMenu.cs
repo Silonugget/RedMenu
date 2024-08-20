@@ -283,64 +283,67 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     {
         case "car":
             carMenu.AddMenuItem(vehicleButton);
+            carMenu.OnItemSelect += (m, item, index) =>
+            {
+                if (item == vehicleButton)
+                {
+                    string objectModel = vehicleData["objectModel"].ToString();
+                    ExecuteCommand($"spawn {objectModel}");
+                }
+            };
             break;
+
         case "bike":
             bikeMenu.AddMenuItem(vehicleButton);
+            bikeMenu.OnItemSelect += (m, item, index) =>
+            {
+                if (item == vehicleButton)
+                {
+                    string objectModel = vehicleData["objectModel"].ToString();
+                    ExecuteCommand($"spawn {objectModel}");
+                }
+            };
             break;
+
         case "plane":
             planeMenu.AddMenuItem(vehicleButton);
+            planeMenu.OnItemSelect += (m, item, index) =>
+            {
+                if (item == vehicleButton)
+                {
+                    string objectModel = vehicleData["objectModel"].ToString();
+                    ExecuteCommand($"spawn {objectModel}");
+                }
+            };
             break;
+
         case "heli":
         case "helicopter":
             heliMenu.AddMenuItem(vehicleButton);
+            heliMenu.OnItemSelect += (m, item, index) =>
+            {
+                if (item == vehicleButton)
+                {
+                    string objectModel = vehicleData["objectModel"].ToString();
+                    ExecuteCommand($"spawn {objectModel}");
+                }
+            };
             break;
+
         default:
             otherMenu.AddMenuItem(vehicleButton);
+            otherMenu.OnItemSelect += (m, item, index) =>
+            {
+                if (item == vehicleButton)
+                {
+                    string objectModel = vehicleData["objectModel"].ToString();
+                    ExecuteCommand($"spawn {objectModel}");
+                }
+            };
             break;
     }
-
-    // Bind the OnItemSelect event to spawn the vehicle when selected
-    carMenu.OnItemSelect += (m, item, index) =>
-    {
-        if (item == vehicleButton)
-        {
-            string objectModel = vehicleData["objectModel"].ToString();
-            ExecuteCommand($"spawn {objectModel}");
-        }
-    };
-    bikeMenu.OnItemSelect += (m, item, index) =>
-    {
-        if (item == vehicleButton)
-        {
-            string objectModel = vehicleData["objectModel"].ToString();
-            ExecuteCommand($"spawn {objectModel}");
-        }
-    };
-    planeMenu.OnItemSelect += (m, item, index) =>
-    {
-        if (item == vehicleButton)
-        {
-            string objectModel = vehicleData["objectModel"].ToString();
-            ExecuteCommand($"spawn {objectModel}");
-        }
-    };
-    heliMenu.OnItemSelect += (m, item, index) =>
-    {
-        if (item == vehicleButton)
-        {
-            string objectModel = vehicleData["objectModel"].ToString();
-            ExecuteCommand($"spawn {objectModel}");
-        }
-    };
-    otherMenu.OnItemSelect += (m, item, index) =>
-    {
-        if (item == vehicleButton)
-        {
-            string objectModel = vehicleData["objectModel"].ToString();
-            ExecuteCommand($"spawn {objectModel}");
-        }
-    };
 }
+
 
 
 
