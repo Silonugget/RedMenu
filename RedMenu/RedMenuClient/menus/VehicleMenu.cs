@@ -37,7 +37,7 @@ namespace RedMenuClient.menus
         public VehicleMenu()
         {
             // Register the event that will be triggered from Lua
-            EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
+            EventHandlers["receiveVehicleConfig"] += new Action<string>(ReceiveVehicleConfig);
         }
 
         private static void ReceiveVehicleConfig(string configJson)
@@ -223,71 +223,23 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(menu, spawnVehicleMenu);
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-// Addon Vehicles Menu
-Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Select a vehicle to spawn.");
-MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-spawnVehicleMenu.AddMenuItem(addonVehicles);
-MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+ // Addon Vehicles Submenu
+                Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+                MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+                spawnVehicleMenu.AddMenuItem(addonVehicles);
+                MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+                MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-// Dictionary to store menu items and their associated vehicle model
-Dictionary<MenuItem, string> vehicleMenuItems = new Dictionary<MenuItem, string>();
+                // Define list of hashes for the iron horses here, including the string "classic"
+                List<string> ironHorseHashes = new List<string> { "Classic", "HorseBat Classic" };
+                AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
+                // Water Horses Submenu
+                List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
+                AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
 
-// Debug: Check if vehicleConfigs is populated
-Debug.WriteLine($"vehicleConfigs count: {vehicleConfigs.Count}");
-
-// Loop through the vehicleConfigs and add the vehicles to the menu
-foreach (var vehicleTypeEntry in vehicleConfigs)
-{
-    // Extract the vehicle name and config data
-    string vehicleName = vehicleTypeEntry.Key;
-    JObject vehicleData = vehicleTypeEntry.Value;
-
-    // Debug: Ensure vehicle data is being accessed correctly
-    Debug.WriteLine($"Processing vehicle: {vehicleName}");
-
-    // Extract the type of the vehicle
-    if (!vehicleData.ContainsKey("type") || !vehicleData.ContainsKey("objectModel"))
-    {
-        Debug.WriteLine($"Skipping vehicle {vehicleName} due to missing data.");
-        continue; // Skip if required fields are missing
-    }
-
-    string type = vehicleData["type"].ToString().ToLower(); // Make it case-insensitive
-    string objectModel = vehicleData["objectModel"].ToString();
-
-    // Debug: Verify the extracted data
-    Debug.WriteLine($"Vehicle {vehicleName} - Type: {type}, Model: {objectModel}");
-
-    // Create a button for each vehicle
-    MenuItem vehicleButton = new MenuItem($"{type.ToUpper()}: {vehicleName}", $"Spawn {vehicleName}");
-
-    // Store the vehicle button and its corresponding model
-    vehicleMenuItems.Add(vehicleButton, objectModel);
-
-    // Sort the vehicles into the main menu based on type and add to the menu
-    addonVehiclesMenu.AddMenuItem(vehicleButton);
-}
-
-// Bind the OnItemSelect event to the addonVehiclesMenu
-addonVehiclesMenu.OnItemSelect += (menu, item, index) =>
-{
-    if (vehicleMenuItems.ContainsKey(item))
-    {
-        string objectModel = vehicleMenuItems[item];
-        ExecuteCommand($"spawn {objectModel}");
-        Debug.WriteLine($"Spawning vehicle with model: {objectModel}");
-    }
-};
-
-
-
-
-
-
-
-
-
+               // Air Horses Submenu
+               List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
+               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
