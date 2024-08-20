@@ -223,13 +223,15 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(menu, spawnVehicleMenu);
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-       
 // Addon Vehicles Menu
 Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Select a vehicle to spawn.");
 MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
 spawnVehicleMenu.AddMenuItem(addonVehicles);
 MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
 MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+
+// Dictionary to store menu items and their associated vehicle model
+Dictionary<MenuItem, string> vehicleMenuItems = new Dictionary<MenuItem, string>();
 
 // Variables to track the number of vehicles in each category for debugging
 int carCount = 0;
@@ -238,7 +240,7 @@ int planeCount = 0;
 int heliCount = 0;
 int otherCount = 0;
 
-// Loop through the vehicleConfigs and sort them into the main menu by type
+// Loop through the vehicleConfigs and add the vehicles to the menu
 foreach (var vehicleTypeEntry in vehicleConfigs)
 {
     // Extract the vehicle name and config data
@@ -251,7 +253,10 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
     // Create a button for each vehicle
     MenuItem vehicleButton = new MenuItem($"{type.ToUpper()}: {vehicleName}", $"Spawn {vehicleName}");
 
-    // Sort the vehicles into their respective categories
+    // Store the vehicle button and its corresponding model
+    vehicleMenuItems.Add(vehicleButton, vehicleData["objectModel"].ToString());
+
+    // Sort the vehicles into their respective categories and add to the main menu
     switch (type)
     {
         case "car":
@@ -280,15 +285,18 @@ foreach (var vehicleTypeEntry in vehicleConfigs)
             otherCount++;
             break;
     }
-
-    // Bind the vehicle spawn action to the vehicle button
-    vehicleButton.Activated += (m, selectedItem) =>
-    {
-        string objectModel = vehicleData["objectModel"].ToString();
-        ExecuteCommand($"spawn {objectModel}");
-        Debug.WriteLine($"Spawning vehicle: {vehicleName} with model: {objectModel}");
-    };
 }
+
+// Bind the OnItemSelect event to the addonVehiclesMenu
+addonVehiclesMenu.OnItemSelect += (menu, item, index) =>
+{
+    if (vehicleMenuItems.ContainsKey(item))
+    {
+        string objectModel = vehicleMenuItems[item];
+        ExecuteCommand($"spawn {objectModel}");
+        Debug.WriteLine($"Spawning vehicle with model: {objectModel}");
+    }
+};
 
 // Debugging print statements to check the number of vehicles in each category
 Debug.WriteLine($"Cars: {carCount}");
@@ -296,6 +304,7 @@ Debug.WriteLine($"Bikes: {bikeCount}");
 Debug.WriteLine($"Planes: {planeCount}");
 Debug.WriteLine($"Helicopters: {heliCount}");
 Debug.WriteLine($"Other Vehicles: {otherCount}");
+
 
 
 
