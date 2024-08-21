@@ -98,13 +98,12 @@ namespace RedMenuClient.menus
     submenu.OnItemSelect += async (m, item, index) =>
     {
         // This is where you can add logic to handle the selected vehicle type
-        // For example, you can execute commands based on the selected vehicle type
         Debug.WriteLine($"Selected vehicle type: {item.Text}");
 
         // Sample command execution based on selected item
         ExecuteCommand(item.Text.ToLower()); // This assumes command names match the vehicle type names
-                    return; // Stop further execution
-                }
+    };
+}
        
 
         // Existing code for spawning vehicles
