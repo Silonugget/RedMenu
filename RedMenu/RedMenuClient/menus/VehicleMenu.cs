@@ -202,8 +202,7 @@ namespace RedMenuClient.menus
         public static void SetupMenu()
         {
             if (setupDone) return;
-            // Trigger the server event to request vehicle config
-    BaseScript.TriggerServerEvent("requestVehicleConfigJSON");
+            
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
@@ -508,6 +507,9 @@ namespace RedMenuClient.menus
 
         public static Menu GetMenu()
         {
+            // Trigger the server event to request the vehicle config after setting up the menu
+    BaseScript.TriggerServerEvent("requestVehicleConfigJSON");
+    await BaseScript.Delay(1000);
             SetupMenu();
             return menu;
         }
