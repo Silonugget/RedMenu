@@ -66,76 +66,86 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddAddonVehicleSubmenu(Menu menu, Dictionary<string, JObject> configs)
+        // Reintroduced: AddVehicleSubmenu for regular vehicle submenus
+        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
         {
-            Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-            MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-            menu.AddMenuItem(addonVehicles);
-            MenuController.AddSubmenu(menu, addonVehiclesMenu);
-            MenuController.BindMenuItem(menu, addonVehiclesMenu, addonVehicles);
+            Menu submenu = new Menu(name, description);
+            MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+            menu.AddMenuItem(submenuBtn);
+            MenuController.AddSubmenu(menu, submenu);
+            MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-            foreach (var vehicleType in configs.Keys)
+            foreach (var hash in hashes)
             {
-                MenuItem item = new MenuItem(vehicleType);
-                addonVehiclesMenu.AddMenuItem(item);
+                MenuItem item = new MenuItem(hash);
+                submenu.AddMenuItem(item);
             }
 
-            addonVehiclesMenu.OnItemSelect += async (m, item, index) =>
+            submenu.OnItemSelect += async (m, item, index) =>
             {
-                string selectedVehicleType = item.Text;
-
-                // Get the first vehicle of the selected type and spawn it
-                if (vehicleConfigs.ContainsKey(selectedVehicleType))
+                if (currentVehicle != 0)
                 {
-                    JArray vehicles = (JArray)vehicleConfigs[selectedVehicleType]["vehicles"];
-                    string firstVehicle = vehicles[0]["model"].ToString();
+                    DeleteVehicle(ref currentVehicle);
+                    currentVehicle = 0;
+                }
 
-                    if (currentVehicle != 0)
+                uint model = (uint)GetHashKey(hashes[index]);
+
+                int ped = PlayerPedId();
+                Vector3 coords = GetEntityCoords(ped, false, false);
+                float h = GetEntityHeading(ped);
+
+                float r = -h * (float)(Math.PI / 180);
+                float x2 = coords.X + (float)(5 * Math.Sin(r));
+                float y2 = coords.Y + (float)(5 * Math.Cos(r));
+
+                if (IsModelInCdimage(model))
+                {
+                    RequestModel(model, false);
+                    while (!HasModelLoaded(model))
                     {
-                        DeleteVehicle(ref currentVehicle);
-                        currentVehicle = 0;
+                        await BaseScript.Delay(0);
                     }
 
-                    uint model = (uint)GetHashKey(firstVehicle);
+                    currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
+                    SetModelAsNoLongerNeeded(model);
+                    SetVehicleOnGroundProperly(currentVehicle, 0);
+                    SetEntityVisible(currentVehicle, true);
+                    BlipAddForEntity(631964804, currentVehicle);
 
-                    int ped = PlayerPedId();
-                    Vector3 coords = GetEntityCoords(ped, false, false);
-                    float h = GetEntityHeading(ped);
-
-                    float r = -h * (float)(Math.PI / 180);
-                    float x2 = coords.X + (float)(5 * Math.Sin(r));
-                    float y2 = coords.Y + (float)(5 * Math.Cos(r));
-
-                    if (IsModelInCdimage(model))
+                    if (UserDefaults.VehicleSpawnInside)
                     {
-                        RequestModel(model, false);
-                        while (!HasModelLoaded(model))
-                        {
-                            await BaseScript.Delay(0);
-                        }
-
-                        currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
-                        SetModelAsNoLongerNeeded(model);
-                        SetVehicleOnGroundProperly(currentVehicle, 0);
-                        SetEntityVisible(currentVehicle, true);
-                        BlipAddForEntity(631964804, currentVehicle);
-
-                        if (UserDefaults.VehicleSpawnInside)
-                        {
-                            TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
-                        }
-
-                        if (firstVehicle == "hotairballoon01")
-                        {
-                            FixHotAirBalloon(currentVehicle);
-                        }
+                        TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
                     }
-                    else
+
+                    if (hashes[index] == "hotairballoon01")
                     {
-                        Debug.WriteLine($"^1[ERROR] This vehicle model is not present in the game files {model}.^7");
+                        FixHotAirBalloon(currentVehicle);
                     }
                 }
+                else
+                {
+                    Debug.WriteLine($"^1[ERROR] This vehicle model is not present in the game files {model}.^7");
+                }
             };
+        }
+
+        private static int GetNearestVehicle()
+        {
+            List<VehicleDistance> vehicles = new List<VehicleDistance>();
+            int veh = 0;
+            int handle = FindFirstVehicle(ref veh);
+            vehicles.Add(new VehicleDistance(veh));
+            while (FindNextVehicle(handle, ref veh))
+            {
+                vehicles.Add(new VehicleDistance(veh));
+            }
+            return vehicles.OrderBy(v => v.distance).First().vehicle;
+        }
+
+        private static void SetVehicleTint(int vehicle, int tint)
+        {
+            Function.Call((Hash)0x8268B098F6FCA4E2, vehicle, tint);
         }
 
         public static void SetupMenu()
@@ -145,7 +155,35 @@ namespace RedMenuClient.menus
             BaseScript.TriggerServerEvent("requestVehicleConfigJSON");
             setupDone = true;
 
-            MenuItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
+            MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
+            MenuItem repairVehicle = new MenuItem("Repair Vehicle", "Repair the vehicle you are currently in.");
+            MenuItem teleport = new MenuItem("Teleport Into Vehicle", "Teleport into the closest vehicle with an open seat.");
+            MenuListItem engineOnOff = new MenuListItem("Engine", new List<string>() { "On", "Off" }, 0, "Set vehicle engine on/off.");
+            MenuListItem lightsOnOff = new MenuListItem("Lights", new List<string>() { "On", "Off" }, 0, "Set vehicle lights on/off.");
+            MenuItem deleteVehicle = new MenuItem("Delete Vehicle", "Delete the vehicle you are currently in.");
+
+            MenuDynamicListItem vehicleTint = new MenuDynamicListItem("Vehicle Tint", "0", new MenuDynamicListItem.ChangeItemCallback((item, left) =>
+            {
+                if (int.TryParse(item.CurrentItem, out int val))
+                {
+                    int newVal = val;
+                    if (left)
+                    {
+                        newVal--;
+                        if (newVal < 0)
+                        {
+                            newVal = 0;
+                        }
+                    }
+                    else
+                    {
+                        newVal++;
+                    }
+                    SetVehicleTint(GetVehiclePedIsIn(PlayerPedId(), false), newVal);
+                    return newVal.ToString();
+                }
+                return "0";
+            }), "Select a predefined tint for the vehicle you are currently in.");
 
             if (PermissionsManager.IsAllowed(Permission.VMSpawn))
             {
@@ -155,9 +193,78 @@ namespace RedMenuClient.menus
                 MenuController.AddSubmenu(menu, spawnVehicleMenu);
                 MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
-                AddAddonVehicleSubmenu(spawnVehicleMenu, vehicleConfigs);
+                // Addon Vehicles Submenu
+                Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+                MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+                spawnVehicleMenu.AddMenuItem(addonVehicles);
+                MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+                MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-                // Regular vehicle submenus (unchanged)
+                // Loop through addon vehicles from vehicleConfigs and add to the menu
+                foreach (var vehicleType in vehicleConfigs.Keys)
+                {
+                    MenuItem item = new MenuItem(vehicleType);
+                    addonVehiclesMenu.AddMenuItem(item);
+                }
+
+                addonVehiclesMenu.OnItemSelect += async (m, item, index) =>
+                {
+                    string selectedVehicleType = item.Text;
+
+                    // Get the first vehicle of the selected type and spawn it
+                    if (vehicleConfigs.ContainsKey(selectedVehicleType))
+                    {
+                        JArray vehicles = (JArray)vehicleConfigs[selectedVehicleType]["vehicles"];
+                        string firstVehicle = vehicles[0]["model"].ToString();
+
+                        if (currentVehicle != 0)
+                        {
+                            DeleteVehicle(ref currentVehicle);
+                            currentVehicle = 0;
+                        }
+
+                        uint model = (uint)GetHashKey(firstVehicle);
+
+                        int ped = PlayerPedId();
+                        Vector3 coords = GetEntityCoords(ped, false, false);
+                        float h = GetEntityHeading(ped);
+
+                        float r = -h * (float)(Math.PI / 180);
+                        float x2 = coords.X + (float)(5 * Math.Sin(r));
+                        float y2 = coords.Y + (float)(5 * Math.Cos(r));
+
+                        if (IsModelInCdimage(model))
+                        {
+                            RequestModel(model, false);
+                            while (!HasModelLoaded(model))
+                            {
+                                await BaseScript.Delay(0);
+                            }
+
+                            currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
+                            SetModelAsNoLongerNeeded(model);
+                            SetVehicleOnGroundProperly(currentVehicle, 0);
+                            SetEntityVisible(currentVehicle, true);
+                            BlipAddForEntity(631964804, currentVehicle);
+
+                            if (UserDefaults.VehicleSpawnInside)
+                            {
+                                TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
+                            }
+
+                            if (firstVehicle == "hotairballoon01")
+                            {
+                                FixHotAirBalloon(currentVehicle);
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"^1[ERROR] This vehicle model is not present in the game files {model}.^7");
+                        }
+                    }
+                };
+
+                // Regular Vehicles Submenu
                 Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
                 MenuItem regularVehicles = new MenuItem("Regular", "Spawn a regular vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
                 spawnVehicleMenu.AddMenuItem(regularVehicles);
@@ -171,7 +278,6 @@ namespace RedMenuClient.menus
                 AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.WagonHashes, "Wagons", "Spawn a wagon.");
                 AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.MiscHashes, "Misc", "Spawn a miscellaneous vehicle.");
             }
-
 
             if (PermissionsManager.IsAllowed(Permission.VMSelectTint))
             {
@@ -201,107 +307,6 @@ namespace RedMenuClient.menus
             if (PermissionsManager.IsAllowed(Permission.VMLightsOnOff))
             {
                 menu.AddMenuItem(lightsOnOff);
-            }
-
-            if (PermissionsManager.IsAllowed(Permission.VMDoors))
-            {
-                Menu doorsMenu = new Menu("Doors", "Open/Close vehicle doors.");
-                MenuItem doors = new MenuItem("Doors", "Open/Close vehicle doors.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-                menu.AddMenuItem(doors);
-                MenuController.AddSubmenu(menu, doorsMenu);
-                MenuController.BindMenuItem(menu, doorsMenu, doors);
-
-                MenuListItem all = new MenuListItem("All", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem frontL = new MenuListItem("Front Left", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem frontR = new MenuListItem("Front Right", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem backL = new MenuListItem("Back Left", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem backR = new MenuListItem("Back Right", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem hood = new MenuListItem("Hood", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem trunk = new MenuListItem("Trunk", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem back1 = new MenuListItem("Back 1", new List<string>() { "Open", "Close" }, 0);
-                MenuListItem back2 = new MenuListItem("Back 2", new List<string>() { "Open", "Close" }, 0);
-
-                doorsMenu.AddMenuItem(all);
-                doorsMenu.AddMenuItem(frontL);
-                doorsMenu.AddMenuItem(frontR);
-                doorsMenu.AddMenuItem(backL);
-                doorsMenu.AddMenuItem(backR);
-                doorsMenu.AddMenuItem(hood);
-                doorsMenu.AddMenuItem(trunk);
-                doorsMenu.AddMenuItem(back1);
-                doorsMenu.AddMenuItem(back2);
-
-                doorsMenu.OnListItemSelect += (m, listItem, selectedIndex, itemIndex) =>
-                {
-                    int doorIndex;
-
-                    if (listItem == frontL)
-                    {
-                        doorIndex = 0;
-                    }
-                    else if (listItem == frontR)
-                    {
-                        doorIndex = 1;
-                    }
-                    else if (listItem == backL)
-                    {
-                        doorIndex = 2;
-                    }
-                    else if (listItem == backR)
-                    {
-                        doorIndex = 3;
-                    }
-                    else if (listItem == hood)
-                    {
-                        doorIndex = 4;
-                    }
-                    else if (listItem == trunk)
-                    {
-                        doorIndex = 5;
-                    }
-                    else if (listItem == back1)
-                    {
-                        doorIndex = 6;
-                    }
-                    else if (listItem == back2)
-                    {
-                        doorIndex = 7;
-                    }
-                    else
-                    {
-                        doorIndex = -1;
-                    }
-
-                    string selected = listItem.GetCurrentSelection();
-
-                    int veh = GetVehiclePedIsIn(PlayerPedId(), false);
-
-                    if (selected == "Open")
-                    {
-                        if (doorIndex == -1)
-                        {
-                            for (int i = 0; i < 8; ++i)
-                            {
-                                SetVehicleDoorOpen(veh, i, false, false);
-                            }
-                        }
-                        else
-                        {
-                            SetVehicleDoorOpen(veh, doorIndex, false, false);
-                        }
-                    }
-                    else
-                    {
-                        if (doorIndex == -1)
-                        {
-                            SetVehicleDoorsShut(veh, false);
-                        }
-                        else
-                        {
-                            SetVehicleDoorShut(veh, doorIndex, false);
-                        }
-                    }
-                };
             }
 
             if (PermissionsManager.IsAllowed(Permission.VMDelete))
@@ -381,7 +386,6 @@ namespace RedMenuClient.menus
                 }
             };
         }
-
 
         public static Menu GetMenu()
         {
