@@ -505,20 +505,14 @@ namespace RedMenuClient.menus
         }
 
 
-        public static async Task<Menu> GetMenu()
-{
-    // Trigger the server event to request the vehicle config
+        public static Menu GetMenu()
+        {
+            // Trigger the server event to request the vehicle config after setting up the menu
     BaseScript.TriggerServerEvent("requestVehicleConfigJSON");
 
-    // Wait for a brief moment to give time for the server to respond
-    await BaseScript.Delay(100);
-
-    // Set up the menu after the delay
-    SetupMenu();
-
-    // Return the menu
-    return menu;
-}
+            SetupMenu();
+            return menu;
+        }
 
     }
 }
