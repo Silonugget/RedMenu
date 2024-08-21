@@ -76,7 +76,7 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+        public static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
         {
             // Create a new submenu with the provided name and description
             Menu submenu = new Menu(name, description);
