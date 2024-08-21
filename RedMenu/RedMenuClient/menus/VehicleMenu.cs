@@ -104,6 +104,9 @@ namespace RedMenuClient.menus
                     int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
                     int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
 
+                    Debug.WriteLine($"Received full config JSON: {configJson}");
+
+
                     Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
 
                     return; // Stop further execution
@@ -247,18 +250,18 @@ namespace RedMenuClient.menus
                List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
                AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
 
-               // Assuming vehicleConfigs.Values is a collection of JObjects where each object contains an "objectModel" field
-List<string> vehicleConfigList = vehicleConfigs.Values.Select(v => v["objectModel"].ToString()).ToList();
+               List<string> vehicleTypeKeys = vehicleConfigs.Keys.ToList();
 
-// Debug: Print the number of vehicles and their object models
-Debug.WriteLine($"Number of vehicles in config: {vehicleConfigList.Count}");
-foreach (var model in vehicleConfigList)
+// Debug: Print the number of vehicle types and the keys
+Debug.WriteLine($"Number of vehicle types: {vehicleTypeKeys.Count}");
+foreach (var key in vehicleTypeKeys)
 {
-    Debug.WriteLine($"Vehicle model: {model}");
+    Debug.WriteLine($"Vehicle type key: {key}");
 }
 
-// Call AddVehicleSubmenu with the newly created list of vehicle models
-AddVehicleSubmenu(addonVehiclesMenu, vehicleConfigList, "TEST", "TESTING");
+// Call AddVehicleSubmenu with the list of keys as the names for the submenu items
+AddVehicleSubmenu(addonVehiclesMenu, vehicleTypeKeys, "Vehicle Types", "List of available vehicle types.");
+
 
 
     // Regular Vehicles Submenu
