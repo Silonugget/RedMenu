@@ -72,40 +72,37 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
-        {
-            // Create a new submenu with the provided name and description
-            Menu submenu = new Menu(name, description);
-            // Create a menu item that when selected, will navigate to the submenu
-            MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-            // Add the menu item to the main menu
-            menu.AddMenuItem(submenuBtn);
-            // Add the submenu to the menu controller and bind it to the submenu button
-            MenuController.AddSubmenu(menu, submenu);
-            MenuController.BindMenuItem(menu, submenu, submenuBtn);
+        private static void AddVehicleSubmenu(Menu menu, string name, string description)
+{
+    // Create a new submenu with the provided name and description
+    Menu submenu = new Menu(name, description);
+    
+    // Create a menu item that when selected, will navigate to the submenu
+    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    
+    // Add the menu item to the main menu
+    menu.AddMenuItem(submenuBtn);
+    
+    // Add the submenu to the menu controller and bind it to the submenu button
+    MenuController.AddSubmenu(menu, submenu);
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-            // Add menu items for each hash in the provided list
-            foreach (var hash in hashes)
-            {
-                MenuItem item = new MenuItem(hash);
-                submenu.AddMenuItem(item);
-            }
+    // Loop through the vehicleConfigs dictionary to create menu items for each vehicle type
+    foreach (var vehicleType in vehicleConfigs.Keys)
+    {
+        MenuItem item = new MenuItem(vehicleType);
+        submenu.AddMenuItem(item);
+    }
 
-            // Define what happens when an item in the submenu is selected
-            submenu.OnItemSelect += async (m, item, index) =>
-            {
-                // Check for the "Classic" item and execute the "ironhorse" command
-                if (item.Text.Equals("Classic"))
-                {
-                    ExecuteCommand("ironhorse");
+    // Define what happens when an item in the submenu is selected
+    submenu.OnItemSelect += async (m, item, index) =>
+    {
+        // This is where you can add logic to handle the selected vehicle type
+        // For example, you can execute commands based on the selected vehicle type
+        Debug.WriteLine($"Selected vehicle type: {item.Text}");
 
-                    // Print vehicle types after the "ironhorse" command is executed
-                    int carCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "car");
-                    int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
-                    int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
-
-                    Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
-
+        // Sample command execution based on selected item
+        ExecuteCommand(item.Text.ToLower()); // This assumes command names match the vehicle type names
                     return; // Stop further execution
                 }
        
