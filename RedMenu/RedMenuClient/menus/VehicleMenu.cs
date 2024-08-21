@@ -199,10 +199,18 @@ namespace RedMenuClient.menus
             Function.Call((Hash)0x8268B098F6FCA4E2, vehicle, tint);
         }
 
-        public static void SetupMenu()
-        {
-            if (setupDone) return;
-            
+        public static async void SetupMenu()
+{
+    if (setupDone) return;
+
+    // Wait until vehicleObjectModels has been populated
+    while (vehicleObjectModels.Count == 0)
+    {
+        Debug.WriteLine("Waiting for vehicleObjectModels to populate...");
+        await BaseScript.Delay(100);  // Wait for 100ms before checking again
+    }
+
+    Debug.WriteLine("vehicleObjectModels populated, setting up menu.");
             setupDone = true;
 
             MenuCheckboxItem spawnInside = new MenuCheckboxItem("Spawn Inside Vehicle", "Automatically spawn inside vehicles.", UserDefaults.VehicleSpawnInside);
