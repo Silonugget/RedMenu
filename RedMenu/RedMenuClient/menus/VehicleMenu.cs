@@ -32,7 +32,7 @@ namespace RedMenuClient.menus
 
     public class VehicleMenu : BaseScript
     {
-        public static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
+        private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
 
         public VehicleMenu()
         {
@@ -40,7 +40,7 @@ namespace RedMenuClient.menus
             EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
         }
 
-        public static void ReceiveVehicleConfig(string configJson)
+        private static void ReceiveVehicleConfig(string configJson)
         {
             // Parse the incoming JSON string into a JObject
             JObject configData = JObject.Parse(configJson);
