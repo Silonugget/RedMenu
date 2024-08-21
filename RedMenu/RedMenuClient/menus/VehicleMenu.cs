@@ -56,6 +56,7 @@ namespace RedMenuClient.menus
 
             // Debug print: How many different vehicle types are there
             Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
+            Debug.WriteLine($"Received full config JSON: {configJson}");
         }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
@@ -104,7 +105,7 @@ namespace RedMenuClient.menus
                     int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
                     int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
 
-                    Debug.WriteLine($"Received full config JSON: {configJson}");
+                    
 
 
                     Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
