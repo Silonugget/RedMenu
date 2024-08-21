@@ -32,6 +32,10 @@ namespace RedMenuClient.menus
 
     public class VehicleMenu : BaseScript
     {
+        // Global list to store objectModel values
+        private static List<string> vehicleObjectModels = new List<string>();
+
+        // Global dictionary to store vehicle configurations
         private static Dictionary<string, JObject> vehicleConfigs = new Dictionary<string, JObject>();
 
         public VehicleMenu()
@@ -45,18 +49,32 @@ namespace RedMenuClient.menus
             // Parse the incoming JSON string into a JObject
             JObject configData = JObject.Parse(configJson);
 
-            // Clear any existing configs before updating
+            // Clear any existing configs and objectModel list before updating
             vehicleConfigs.Clear();
+            vehicleObjectModels.Clear();
 
-            // Loop through the config and add it to the dictionary
+            // Loop through the config and add it to the dictionary and objectModel list
             foreach (var vehicleType in configData)
             {
                 vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
+
+                // Extract the objectModel value and add it to the global list
+                if (vehicleType.Value["objectModel"] != null)
+                {
+                    string objectModel = vehicleType.Value["objectModel"].ToString();
+                    vehicleObjectModels.Add(objectModel);
+                }
             }
 
-            // Debug print: How many different vehicle types are there
+            // Debug print: How many different vehicle types and object models are there
             Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
-            Debug.WriteLine($"Received full config JSON: {configJson}");
+            Debug.WriteLine($"Number of object models: {vehicleObjectModels.Count}");
+
+            // Print out each object model in the list
+            foreach (var objectModel in vehicleObjectModels)
+            {
+                Debug.WriteLine($"Object model: {objectModel}");
+            }
         }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
@@ -231,39 +249,35 @@ namespace RedMenuClient.menus
 
        
                 // Addon Vehicles Submenu
+    Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
+    MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    spawnVehicleMenu.AddMenuItem(addonVehicles);
+    MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
+    MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-                Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-                MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-                spawnVehicleMenu.AddMenuItem(addonVehicles);
-                MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-                MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+    // List of object models to be used for the submenu
+    List<string> objectModelList = new List<string>();
 
+    // Populate the objectModel list from the vehicleConfigs dictionary
+    foreach (var vehicleConfig in vehicleConfigs.Values)
+    {
+        // Check if the "objectModel" field exists
+        if (vehicleConfig["objectModel"] != null)
+        {
+            string objectModel = vehicleConfig["objectModel"].ToString();
+            objectModelList.Add(objectModel); // Add the objectModel to the list
+        }
+    }
 
-                // Define list of hashes for the iron horses here, including the string "classic"
-                List<string> ironHorseHashes = new List<string> { "Classic", "HorseBat Classic" };
-                AddVehicleSubmenu(addonVehiclesMenu, ironHorseHashes, "Iron Horses", "Spawn an iron horse.");
-                // Water Horses Submenu
-                List<string> waterHorseHashes = new List<string> { "Jet Horse Ski" };
-                AddVehicleSubmenu(addonVehiclesMenu, waterHorseHashes, "Water Horses", "Spawn a water horse.");
+    // Debug: Print the number of object models and their values
+    Debug.WriteLine($"Number of object models: {objectModelList.Count}");
+    foreach (var model in objectModelList)
+    {
+        Debug.WriteLine($"Object model: {model}");
+    }
 
-
-               // Air Horses Submenu
-               List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
-               AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
-
-               List<string> vehicleTypeKeys = vehicleConfigs.Keys.ToList();
-
-// Debug: Print the number of vehicle types and the keys
-Debug.WriteLine($"Number of vehicle types: {vehicleTypeKeys.Count}");
-foreach (var key in vehicleTypeKeys)
-{
-    Debug.WriteLine($"Vehicle type key: {key}");
-}
-
-// Call AddVehicleSubmenu with the list of keys as the names for the submenu items
-AddVehicleSubmenu(addonVehiclesMenu, vehicleTypeKeys, "Vehicle Types", "List of available vehicle types.");
-
-
+    // Call AddVehicleSubmenu with the list of object models as the names for the submenu items
+    AddVehicleSubmenu(addonVehiclesMenu, objectModelList, "Vehicle Models", "List of available object models.");
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
@@ -272,6 +286,7 @@ AddVehicleSubmenu(addonVehiclesMenu, vehicleTypeKeys, "Vehicle Types", "List of 
     MenuController.AddSubmenu(spawnVehicleMenu, regularVehiclesMenu);
     MenuController.BindMenuItem(spawnVehicleMenu, regularVehiclesMenu, regularVehicles);
 
+    // Call AddVehicleSubmenu with other vehicle lists
     AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.BuggyHashes, "Buggies", "Spawn a buggy.");
     AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.BoatHashes, "Boats", "Spawn a boat.");
     AddVehicleSubmenu(regularVehiclesMenu, data.VehicleData.CartHashes, "Carts", "Spawn a cart.");
