@@ -41,26 +41,22 @@ namespace RedMenuClient.menus
         }
 
         private static void ReceiveVehicleConfig(string configJson)
-{
-    // Parse the incoming JSON string into a JObject
-    JObject configData = JObject.Parse(configJson);
+        {
+            // Parse the incoming JSON string into a JObject
+            JObject configData = JObject.Parse(configJson);
 
-    // Clear any existing configs before updating
-    vehicleConfigs.Clear();
+            // Clear any existing configs before updating
+            vehicleConfigs.Clear();
 
-    // Loop through the config and add it to the dictionary
-    foreach (var vehicleType in configData)
-    {
-        Debug.WriteLine($"Adding vehicle type: {vehicleType.Key}"); // Debug: Print each vehicle type being added
-        vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
-    }
+            // Loop through the config and add it to the dictionary
+            foreach (var vehicleType in configData)
+            {
+                vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
+            }
 
-    // Debug print: How many different vehicle types are there
-    Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
-}
-
-
-
+            // Debug print: How many different vehicle types are there
+            Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
+        }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
@@ -76,7 +72,7 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        public static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
+        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
         {
             // Create a new submenu with the provided name and description
             Menu submenu = new Menu(name, description);
@@ -161,45 +157,6 @@ namespace RedMenuClient.menus
                 }
             };
         }
-        // Call this after receiving the config and when you're ready to populate the menu
-public static void PopulateAddonVehicleMenu()
-{
-    // Make sure the dictionary contains values
-    if (vehicleConfigs.Count > 0)
-    {
-        // Extract objectModel values from the config
-        List<string> vehicleConfigList = vehicleConfigs.Values
-            .Select(v =>
-            {
-                if (v["objectModel"] != null)
-                {
-                    Debug.WriteLine($"Found objectModel: {v["objectModel"]}");
-                    return v["objectModel"].ToString();
-                }
-                else
-                {
-                    Debug.WriteLine($"Missing objectModel in config");
-                    return null;
-                }
-            })
-            .Where(v => v != null)
-            .ToList();
-
-        // Debug: Print the extracted vehicle models
-        Debug.WriteLine($"Number of vehicle models in list: {vehicleConfigList.Count}");
-        foreach (var model in vehicleConfigList)
-        {
-            Debug.WriteLine($"Vehicle model: {model}");
-        }
-
-        // Call AddVehicleSubmenu with the newly created list of vehicle models
-        AddVehicleSubmenu(addonVehiclesMenu, vehicleConfigList, "TEST", "TESTING");
-    }
-    else
-    {
-        Debug.WriteLine("No vehicle configs available.");
-    }
-}
         
 
         private static int GetNearestVehicle()
@@ -290,7 +247,7 @@ public static void PopulateAddonVehicleMenu()
                List<string> airHorseHashes = new List<string> { "Xwing", "Fireplane" };
                AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
 
-// Assuming vehicleConfigs.Values is a collection of JObjects where each object contains an "objectModel" field
+               // Assuming vehicleConfigs.Values is a collection of JObjects where each object contains an "objectModel" field
 List<string> vehicleConfigList = vehicleConfigs.Values.Select(v => v["objectModel"].ToString()).ToList();
 
 // Debug: Print the number of vehicles and their object models
