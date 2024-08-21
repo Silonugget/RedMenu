@@ -248,7 +248,7 @@ namespace RedMenuClient.menus
                AddVehicleSubmenu(addonVehiclesMenu, airHorseHashes, "Air Horses", "Spawn an air horse (spawn in water).");
 
 // Assuming vehicleConfigs.Values is a collection of strings
-List<string> vehicleConfigList = vehicleConfigs.Values.Select(v => v["model"].ToString()).ToList(); // Convert to list of vehicle models (strings)
+List<string> vehicleConfigList = vehicleConfigs.Values.Select(v => v["objectModel"].ToString()).ToList(); // Convert to list of vehicle models (strings)
 
 // Call AddVehicleSubmenu with the newly created list
 AddVehicleSubmenu(addonVehiclesMenu, vehicleConfigList, "TEST", "TESTING");
