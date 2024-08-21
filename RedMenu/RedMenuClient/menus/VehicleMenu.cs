@@ -102,9 +102,6 @@ namespace RedMenuClient.menus
 
         // Sample command execution based on selected item
         ExecuteCommand(item.Text.ToLower()); // This assumes command names match the vehicle type names
-    };
-}
-       
 
         // Existing code for spawning vehicles
         if (currentVehicle != 0)
