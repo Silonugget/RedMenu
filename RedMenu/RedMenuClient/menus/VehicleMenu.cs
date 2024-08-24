@@ -91,43 +91,37 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddVehicleSubmenu(Menu menu, List<string> keys, string name, string description, bool isAddonVehicle = false)
+       private static void AddVehicleSubmenu(Menu menu, List<string> keys, string name, string description, bool isAddonVehicle = false)
 {
     // Create a new submenu with the provided name and description
     Menu submenu = new Menu(name, description);
-    // Create a menu item that when selected, will navigate to the submenu
     MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    // Add the menu item to the main menu
     menu.AddMenuItem(submenuBtn);
-    // Add the submenu to the menu controller and bind it to the submenu button
     MenuController.AddSubmenu(menu, submenu);
-    MenuController.BindMenuItem(menu, submenu, submenuBtn);
+    MenuController.BindMenuItem(menu, submenuBtn, submenuBtn);
 
-    // Add menu items for each key in the provided list
     foreach (var key in keys)
     {
         MenuItem item = new MenuItem(key);
         submenu.AddMenuItem(item);
     }
 
-    // Define what happens when an item in the submenu is selected
     submenu.OnItemSelect += async (m, item, index) =>
     {
         string selectedKey = keys[index];
 
         if (isAddonVehicle)
         {
-            // Print the selected addon vehicle key
             Debug.WriteLine($"Selected addon vehicle key: {selectedKey}");
 
-            // Find the corresponding vehicle configuration using the selected key
+            // Get the vehicle config for the selected key
             if (vehicleConfigs.TryGetValue(selectedKey, out JObject vehicleConfig))
             {
-                // Debug print to show the configuration
-                Debug.WriteLine($"Addon Vehicle configuration found: {vehicleConfig.ToString()}");
+                // Convert the JObject to a Dictionary<string, object> for Lua compatibility
+                Dictionary<string, object> configDict = vehicleConfig.ToObject<Dictionary<string, object>>();
 
-                // Trigger the server event to spawn the addon vehicle
-                TriggerServerEvent("addon_vehicles:spawn_car", vehicleConfig.ToString());
+                // Send the dictionary to the server instead of the raw JSON string
+                TriggerServerEvent("addon_vehicles:spawn_car", configDict);
             }
             else
             {
@@ -136,7 +130,7 @@ namespace RedMenuClient.menus
         }
         else
         {
-            // Regular vehicle logic: spawn vehicle directly
+            // Regular vehicle spawning logic
             Debug.WriteLine($"Selected regular vehicle: {selectedKey}");
 
             if (currentVehicle != 0)
@@ -151,7 +145,6 @@ namespace RedMenuClient.menus
             Vector3 coords = GetEntityCoords(ped, false, false);
             float h = GetEntityHeading(ped);
 
-            // Get a point in front of the player
             float r = -h * (float)(Math.PI / 180);
             float x2 = coords.X + (float)(5 * Math.Sin(r));
             float y2 = coords.Y + (float)(5 * Math.Cos(r));
@@ -175,7 +168,6 @@ namespace RedMenuClient.menus
                     TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
                 }
 
-                // Special case: Hot air balloon handling
                 if (keys[index] == "hotairballoon01")
                 {
                     FixHotAirBalloon(currentVehicle);
@@ -188,6 +180,7 @@ namespace RedMenuClient.menus
         }
     };
 }
+
 
 
         
