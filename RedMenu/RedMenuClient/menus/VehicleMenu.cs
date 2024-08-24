@@ -106,27 +106,15 @@ namespace RedMenuClient.menus
         submenu.AddMenuItem(item);
     }
 
-    submenu.OnItemSelect += async (m, item, index) =>
+    submenu.OnItemSelect += (m, item, index) =>
     {
         string selectedKey = keys[index];
 
         if (isAddonVehicle)
         {
-            Debug.WriteLine($"Selected addon vehicle key: {selectedKey}");
-
-            // Get the vehicle config for the selected key
-            if (vehicleConfigs.TryGetValue(selectedKey, out JObject vehicleConfig))
-            {
-                // Convert the JObject to a JSON string for Lua compatibility
-                string configJson = vehicleConfig.ToString();
-
-                // Send the JSON string to the server
-                TriggerServerEvent("addon_vehicles:spawn_car", configJson);
-            }
-            else
-            {
-                Debug.WriteLine($"^1[ERROR] No configuration found for selected key: {selectedKey}^7");
-            }
+            // Execute the command with the selected key
+            Debug.WriteLine($"Executing command: balboni {selectedKey}");
+            ExecuteCommand($"balboni {selectedKey}");
         }
         else
         {
@@ -180,6 +168,7 @@ namespace RedMenuClient.menus
         }
     };
 }
+
 
 
 
