@@ -260,24 +260,31 @@ private static void ReceiveVehicleConfig(string configJson)
 
 
   // Addon Vehicles Selection
-        Menu addonVehicleTypeMenu = new Menu("Addon Vehicle Types", "Select a vehicle type.");
-        MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+        Menu addonVehicleTypeMenu = new Menu("Vehicle Types", "Select vehicle type.");
+        MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
         spawnVehicleMenu.AddMenuItem(addonVehicles);
         MenuController.AddSubmenu(spawnVehicleMenu, addonVehicleTypeMenu);
         MenuController.BindMenuItem(spawnVehicleMenu, addonVehicleTypeMenu, addonVehicles);
 
-        // Create submenus for each addon vehicle type
+        // Populate the addon vehicle type menu with options
         foreach (var type in categorizedVehicles.Keys)
         {
-            Menu typeMenu = new Menu(type, $"Select a {type} vehicle.");
-            MenuItem typeMenuButton = new MenuItem(type, $"Select a {type} vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+            // Add an item for each vehicle type directly to the addonVehicleTypeMenu
+            MenuItem typeMenuButton = new MenuItem(type, $"View {type} vehicles.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
             addonVehicleTypeMenu.AddMenuItem(typeMenuButton);
-            MenuController.AddSubmenu(addonVehicleTypeMenu, typeMenu);
-            MenuController.BindMenuItem(addonVehicleTypeMenu, typeMenu, typeMenuButton);
 
-            // Add vehicles of this type to the submenu
-            AddVehicleSubmenu(typeMenu, categorizedVehicles[type], type, $"List of available {type} vehicles.", true);
+            // Handle the event when a type is selected
+            addonVehicleTypeMenu.OnItemSelect += (menu, item, index) =>
+            {
+                // When a vehicle type is selected, clear the current items in the menu
+                addonVehicleTypeMenu.ClearMenuItems();
+
+                // Populate the menu with the vehicles of the selected type
+                string selectedType = item.Text;
+                AddVehicleSubmenu(addonVehicleTypeMenu, categorizedVehicles[selectedType], selectedType, $"List of available {selectedType} vehicles.", true);
+            };
         }
+
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
