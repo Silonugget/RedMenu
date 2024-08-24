@@ -58,23 +58,13 @@ namespace RedMenuClient.menus
             {
                 vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
 
-                // Extract the objectModel value and add it to the global list
-                if (vehicleType.Value["objectModel"] != null)
-                {
-                    string objectModel = vehicleType.Value["objectModel"].ToString();
-                    vehicleObjectModels.Add(objectModel);
-                }
+
             }
 
             // Debug print: How many different vehicle types and object models are there
             Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
             Debug.WriteLine($"Number of object models: {vehicleObjectModels.Count}");
 
-            // Print out each object model in the list
-            foreach (var objectModel in vehicleObjectModels)
-            {
-                Debug.WriteLine($"Object model: {objectModel}");
-            }
         }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
@@ -106,20 +96,18 @@ namespace RedMenuClient.menus
         submenu.AddMenuItem(item);
     }
 
-    submenu.OnItemSelect += (m, item, index) =>
+    submenu.OnItemSelect += async (m, item, index) => // Mark the lambda as async
     {
         string selectedKey = keys[index];
 
         if (isAddonVehicle)
         {
             // Execute the command with the selected key
-            Debug.WriteLine($"Executing command: balboni {selectedKey}");
             ExecuteCommand($"balboni {selectedKey}");
         }
         else
         {
             // Regular vehicle spawning logic
-            Debug.WriteLine($"Selected regular vehicle: {selectedKey}");
 
             if (currentVehicle != 0)
             {
@@ -142,7 +130,7 @@ namespace RedMenuClient.menus
                 RequestModel(model, false);
                 while (!HasModelLoaded(model))
                 {
-                    await BaseScript.Delay(0);
+                    await BaseScript.Delay(0); // Use await correctly now
                 }
 
                 currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
@@ -169,14 +157,7 @@ namespace RedMenuClient.menus
     };
 }
 
-
-
-
-
-
-
-        
-
+    
         private static int GetNearestVehicle()
         {
             List<VehicleDistance> vehicles = new List<VehicleDistance>();
