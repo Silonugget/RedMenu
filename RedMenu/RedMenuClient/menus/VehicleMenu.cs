@@ -95,11 +95,15 @@ namespace RedMenuClient.menus
 {
     // Create a new submenu with the provided name and description
     Menu submenu = new Menu(name, description);
+    // Create a menu item that when selected, will navigate to the submenu
     MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    // Add the menu item to the main menu
     menu.AddMenuItem(submenuBtn);
-    MenuController.AddSubmenu(menu, submenu);
-    MenuController.BindMenuItem(menu, submenuBtn, submenuBtn);
+    // Add the submenu to the menu controller and bind it to the submenu button
+    MenuController.AddSubmenu(menu, submenu);  // Correct binding
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);  // Correct binding
 
+    // Add menu items for each key in the provided list
     foreach (var key in keys)
     {
         MenuItem item = new MenuItem(key);
@@ -180,6 +184,7 @@ namespace RedMenuClient.menus
         }
     };
 }
+
 
 
 
