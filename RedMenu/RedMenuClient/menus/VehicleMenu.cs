@@ -95,15 +95,11 @@ namespace RedMenuClient.menus
 {
     // Create a new submenu with the provided name and description
     Menu submenu = new Menu(name, description);
-    // Create a menu item that when selected, will navigate to the submenu
     MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    // Add the menu item to the main menu
     menu.AddMenuItem(submenuBtn);
-    // Add the submenu to the menu controller and bind it to the submenu button
-    MenuController.AddSubmenu(menu, submenu);  // Correct binding
-    MenuController.BindMenuItem(menu, submenu, submenuBtn);  // Correct binding
+    MenuController.AddSubmenu(menu, submenu);
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-    // Add menu items for each key in the provided list
     foreach (var key in keys)
     {
         MenuItem item = new MenuItem(key);
@@ -121,11 +117,11 @@ namespace RedMenuClient.menus
             // Get the vehicle config for the selected key
             if (vehicleConfigs.TryGetValue(selectedKey, out JObject vehicleConfig))
             {
-                // Convert the JObject to a Dictionary<string, object> for Lua compatibility
-                Dictionary<string, object> configDict = vehicleConfig.ToObject<Dictionary<string, object>>();
+                // Convert the JObject to a JSON string for Lua compatibility
+                string configJson = vehicleConfig.ToString();
 
-                // Send the dictionary to the server instead of the raw JSON string
-                TriggerServerEvent("addon_vehicles:spawn_car", configDict);
+                // Send the JSON string to the server
+                TriggerServerEvent("addon_vehicles:spawn_car", configJson);
             }
             else
             {
@@ -184,6 +180,8 @@ namespace RedMenuClient.menus
         }
     };
 }
+
+
 
 
 
