@@ -44,35 +44,58 @@ namespace RedMenuClient.menus
             EventHandlers["receiveVehicleConfigJSON"] += new Action<string>(ReceiveVehicleConfig);
         }
 
-        private static void ReceiveVehicleConfig(string configJson)
+        private static Dictionary<string, List<string>> categorizedVehicles = new Dictionary<string, List<string>>(); // Store vehicles by type
+
+private static void ReceiveVehicleConfig(string configJson)
+{
+    // Parse the incoming JSON string into a JObject
+    JObject configData = JObject.Parse(configJson);
+
+    // Clear any existing configs and objectModel list before updating
+    vehicleConfigs.Clear();
+    vehicleObjectModels.Clear();
+    categorizedVehicles.Clear(); // Clear categorized vehicles
+
+    // Loop through the config and add it to the dictionary and categorized vehicles list
+    foreach (var vehicleType in configData)
+    {
+        vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
+
+        // Extract the objectModel value and add it to the global list
+        if (vehicleType.Value["objectModel"] != null)
         {
-            // Parse the incoming JSON string into a JObject
-            JObject configData = JObject.Parse(configJson);
+            string objectModel = vehicleType.Value["objectModel"].ToString();
+            vehicleObjectModels.Add(objectModel);
+        }
 
-            // Clear any existing configs and objectModel list before updating
-            vehicleConfigs.Clear();
-            vehicleObjectModels.Clear();
-
-            // Loop through the config and add it to the dictionary and objectModel list
-            foreach (var vehicleType in configData)
+        // Categorize vehicles by type
+        if (vehicleType.Value["type"] != null)
+        {
+            string type = vehicleType.Value["type"].ToString();
+            if (!categorizedVehicles.ContainsKey(type))
             {
-                vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
-                // Extract the objectModel value and add it to the global list
-                if (vehicleType.Value["objectModel"] != null)
-                {
-                    string objectModel = vehicleType.Value["objectModel"].ToString();
-                    vehicleObjectModels.Add(objectModel);
-                }
-
-
+                categorizedVehicles.Add(type, new List<string>());
             }
+            categorizedVehicles[type].Add(vehicleType.Key); // Add the vehicle key to the appropriate type
+        }
+        else
+        {
+            // If no type is defined, categorize as "Misc"
+            if (!categorizedVehicles.ContainsKey("Misc"))
+            {
+                categorizedVehicles.Add("Misc", new List<string>());
+            }
+            categorizedVehicles["Misc"].Add(vehicleType.Key);
+        }
+    }
+
+    // Debug print: How many different vehicle types and object models are there
+    Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
+    Debug.WriteLine($"Number of object models: {vehicleObjectModels.Count}");
+}
             
 
-            // Debug print: How many different vehicle types and object models are there
-            Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
-            Debug.WriteLine($"Number of object models: {vehicleObjectModels.Count}");
 
-        }
 
         private static Menu menu = new Menu("Vehicle Menu", "Vehicle related options.");
         private static bool setupDone = false;
@@ -236,21 +259,25 @@ namespace RedMenuClient.menus
     MenuController.BindMenuItem(menu, spawnVehicleMenu, spawnVehicle);
 
 
- // Addon Vehicles Submenu
+  // Addon Vehicles Selection
+        Menu addonVehicleTypeMenu = new Menu("Addon Vehicle Types", "Select a vehicle type.");
+        MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+        spawnVehicleMenu.AddMenuItem(addonVehicles);
+        MenuController.AddSubmenu(spawnVehicleMenu, addonVehicleTypeMenu);
+        MenuController.BindMenuItem(spawnVehicleMenu, addonVehicleTypeMenu, addonVehicles);
 
-       
-                // Addon Vehicles Submenu
-    Menu addonVehiclesMenu = new Menu("Addon Vehicles", "Spawn an addon vehicle.");
-    MenuItem addonVehicles = new MenuItem("Addon Vehicles", "Spawn an addon vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-    spawnVehicleMenu.AddMenuItem(addonVehicles);
-    MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
-    MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
+        // Create submenus for each addon vehicle type
+        foreach (var type in categorizedVehicles.Keys)
+        {
+            Menu typeMenu = new Menu(type, $"Select a {type} vehicle.");
+            MenuItem typeMenuButton = new MenuItem(type, $"Select a {type} vehicle.") { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+            addonVehicleTypeMenu.AddMenuItem(typeMenuButton);
+            MenuController.AddSubmenu(addonVehicleTypeMenu, typeMenu);
+            MenuController.BindMenuItem(addonVehicleTypeMenu, typeMenu, typeMenuButton);
 
-    // Get the top-level keys (e.g., "car1", "car2") from vehicleConfigs
-List<string> vehicleKeys = vehicleConfigs.Keys.ToList();
-
-// Create the submenu for addon vehicles using the top-level keys
-AddVehicleSubmenu(addonVehiclesMenu, vehicleKeys, "Addon Vehicles", "List of available addon vehicles.", true);
+            // Add vehicles of this type to the submenu
+            AddVehicleSubmenu(typeMenu, categorizedVehicles[type], type, $"List of available {type} vehicles.", true);
+        }
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
