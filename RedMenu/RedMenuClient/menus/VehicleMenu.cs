@@ -91,94 +91,105 @@ namespace RedMenuClient.menus
             SetVehicleAsNoLongerNeeded(ref veh);
         }
 
-        private static void AddVehicleSubmenu(Menu menu, List<string> hashes, string name, string description)
-        {
-            // Create a new submenu with the provided name and description
-            Menu submenu = new Menu(name, description);
-            // Create a menu item that when selected, will navigate to the submenu
-            MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
-            // Add the menu item to the main menu
-            menu.AddMenuItem(submenuBtn);
-            // Add the submenu to the menu controller and bind it to the submenu button
-            MenuController.AddSubmenu(menu, submenu);
-            MenuController.BindMenuItem(menu, submenu, submenuBtn);
+        private static void AddVehicleSubmenu(Menu menu, List<string> keys, string name, string description, bool isAddonVehicle = false)
+{
+    // Create a new submenu with the provided name and description
+    Menu submenu = new Menu(name, description);
+    // Create a menu item that when selected, will navigate to the submenu
+    MenuItem submenuBtn = new MenuItem(name, description) { RightIcon = MenuItem.Icon.ARROW_RIGHT };
+    // Add the menu item to the main menu
+    menu.AddMenuItem(submenuBtn);
+    // Add the submenu to the menu controller and bind it to the submenu button
+    MenuController.AddSubmenu(menu, submenu);
+    MenuController.BindMenuItem(menu, submenu, submenuBtn);
 
-            // Add menu items for each hash in the provided list
-            foreach (var hash in hashes)
+    // Add menu items for each key in the provided list
+    foreach (var key in keys)
+    {
+        MenuItem item = new MenuItem(key);
+        submenu.AddMenuItem(item);
+    }
+
+    // Define what happens when an item in the submenu is selected
+    submenu.OnItemSelect += async (m, item, index) =>
+    {
+        string selectedKey = keys[index];
+
+        if (isAddonVehicle)
+        {
+            // Print the selected addon vehicle key
+            Debug.WriteLine($"Selected addon vehicle key: {selectedKey}");
+
+            // Find the corresponding vehicle configuration using the selected key
+            if (vehicleConfigs.TryGetValue(selectedKey, out JObject vehicleConfig))
             {
-                MenuItem item = new MenuItem(hash);
-                submenu.AddMenuItem(item);
+                // Debug print to show the configuration
+                Debug.WriteLine($"Addon Vehicle configuration found: {vehicleConfig.ToString()}");
+
+                // Trigger the server event to spawn the addon vehicle
+                TriggerServerEvent("addon_vehicles:spawn_car", vehicleConfig.ToString());
+            }
+            else
+            {
+                Debug.WriteLine($"^1[ERROR] No configuration found for selected key: {selectedKey}^7");
+            }
+        }
+        else
+        {
+            // Regular vehicle logic: spawn vehicle directly
+            Debug.WriteLine($"Selected regular vehicle: {selectedKey}");
+
+            if (currentVehicle != 0)
+            {
+                DeleteVehicle(ref currentVehicle);
+                currentVehicle = 0;
             }
 
-            // Define what happens when an item in the submenu is selected
-            submenu.OnItemSelect += async (m, item, index) =>
+            uint model = (uint)GetHashKey(keys[index]);
+
+            int ped = PlayerPedId();
+            Vector3 coords = GetEntityCoords(ped, false, false);
+            float h = GetEntityHeading(ped);
+
+            // Get a point in front of the player
+            float r = -h * (float)(Math.PI / 180);
+            float x2 = coords.X + (float)(5 * Math.Sin(r));
+            float y2 = coords.Y + (float)(5 * Math.Cos(r));
+
+            if (IsModelInCdimage(model))
             {
-                // Check for the "Classic" item and execute the "ironhorse" command
-                if (item.Text.Equals("Classic"))
+                RequestModel(model, false);
+                while (!HasModelLoaded(model))
                 {
-                    ExecuteCommand("ironhorse");
-
-                    // Print vehicle types after the "ironhorse" command is executed
-                    int carCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "car");
-                    int boatCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "boat");
-                    int planeCount = vehicleConfigs.Values.Count(v => v["type"].ToString() == "plane");
-
-                    
-
-
-                    Debug.WriteLine($"Car types: {carCount}, Boat types: {boatCount}, Plane types: {planeCount}");
-
-                    return; // Stop further execution
+                    await BaseScript.Delay(0);
                 }
-        // Existing code for spawning vehicles
-        if (currentVehicle != 0)
-        {
-            DeleteVehicle(ref currentVehicle);
-            currentVehicle = 0;
+
+                currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
+                SetModelAsNoLongerNeeded(model);
+                SetVehicleOnGroundProperly(currentVehicle, 0);
+                SetEntityVisible(currentVehicle, true);
+                BlipAddForEntity(631964804, currentVehicle);
+
+                if (UserDefaults.VehicleSpawnInside)
+                {
+                    TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
+                }
+
+                // Special case: Hot air balloon handling
+                if (keys[index] == "hotairballoon01")
+                {
+                    FixHotAirBalloon(currentVehicle);
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"^1[ERROR] This vehicle model is not present in the game files: {model}.^7");
+            }
         }
+    };
+}
 
-                uint model = (uint)GetHashKey(hashes[index]);
 
-                int ped = PlayerPedId();
-                Vector3 coords = GetEntityCoords(ped, false, false);
-                float h = GetEntityHeading(ped);
-
-                // Get a point in front of the player
-                float r = -h * (float)(Math.PI / 180);
-                float x2 = coords.X + (float)(5 * Math.Sin(r));
-                float y2 = coords.Y + (float)(5 * Math.Cos(r));
-
-                if (IsModelInCdimage(model))
-                {
-                    RequestModel(model, false);
-                    while (!HasModelLoaded(model))
-                    {
-                        await BaseScript.Delay(0);
-                    }
-
-                    currentVehicle = CreateVehicle(model, x2, y2, coords.Z, h, true, true, false, true);
-                    SetModelAsNoLongerNeeded(model);
-                    SetVehicleOnGroundProperly(currentVehicle, 0);
-                    SetEntityVisible(currentVehicle, true);
-                    BlipAddForEntity(631964804, currentVehicle);
-
-                    if (UserDefaults.VehicleSpawnInside)
-                    {
-                        TaskWarpPedIntoVehicle(ped, currentVehicle, -1);
-                    }
-
-                    // If this isn't done, the hot air balloon won't move with the wind for some reason
-                    if (hashes[index] == "hotairballoon01")
-                    {
-                        FixHotAirBalloon(currentVehicle);
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine($"^1[ERROR] This vehicle model is not present in the game files {model}.^7");
-                }
-            };
-        }
         
 
         private static int GetNearestVehicle()
@@ -262,29 +273,11 @@ namespace RedMenuClient.menus
     MenuController.AddSubmenu(spawnVehicleMenu, addonVehiclesMenu);
     MenuController.BindMenuItem(spawnVehicleMenu, addonVehiclesMenu, addonVehicles);
 
-    // List of object models to be used for the submenu
-    List<string> objectModelList = new List<string>();
+    // Get the top-level keys (e.g., "car1", "car2") from vehicleConfigs
+List<string> vehicleKeys = vehicleConfigs.Keys.ToList();
 
-    // Populate the objectModel list from the vehicleConfigs dictionary
-    foreach (var vehicleConfig in vehicleConfigs.Values)
-    {
-        // Check if the "objectModel" field exists
-        if (vehicleConfig["objectModel"] != null)
-        {
-            string objectModel = vehicleConfig["objectModel"].ToString();
-            objectModelList.Add(objectModel); // Add the objectModel to the list
-        }
-    }
-
-    // Debug: Print the number of object models and their values
-    Debug.WriteLine($"Number of object models: {objectModelList.Count}");
-    foreach (var model in objectModelList)
-    {
-        Debug.WriteLine($"Object model: {model}");
-    }
-
-    // Call AddVehicleSubmenu with the list of object models as the names for the submenu items
-    AddVehicleSubmenu(addonVehiclesMenu, objectModelList, "Vehicle Models", "List of available object models.");
+// Create the submenu for addon vehicles using the top-level keys
+AddVehicleSubmenu(addonVehiclesMenu, vehicleKeys, "Addon Vehicles", "List of available addon vehicles.", true);
 
     // Regular Vehicles Submenu
     Menu regularVehiclesMenu = new Menu("Regular", "Spawn a regular vehicle.");
