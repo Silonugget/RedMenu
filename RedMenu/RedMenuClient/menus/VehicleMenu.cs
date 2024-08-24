@@ -60,6 +60,12 @@ namespace RedMenuClient.menus
 
 
             }
+            // Extract the objectModel value and add it to the global list
+                if (vehicleType.Value["objectModel"] != null)
+                {
+                    string objectModel = vehicleType.Value["objectModel"].ToString();
+                    vehicleObjectModels.Add(objectModel);
+                }
 
             // Debug print: How many different vehicle types and object models are there
             Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
