@@ -57,15 +57,16 @@ namespace RedMenuClient.menus
             foreach (var vehicleType in configData)
             {
                 vehicleConfigs.Add(vehicleType.Key, (JObject)vehicleType.Value);
-
-
-            }
-            // Extract the objectModel value and add it to the global list
+                // Extract the objectModel value and add it to the global list
                 if (vehicleType.Value["objectModel"] != null)
                 {
                     string objectModel = vehicleType.Value["objectModel"].ToString();
                     vehicleObjectModels.Add(objectModel);
                 }
+
+
+            }
+            
 
             // Debug print: How many different vehicle types and object models are there
             Debug.WriteLine($"Number of different vehicle types: {vehicleConfigs.Count}");
